@@ -1,0 +1,136 @@
+﻿@using WebPBL3.Models
+@using Newtonsoft.Json
+@model WebPBL3.Models.CarDto
+
+
+@{
+
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var makesJson = TempData["makes"] as string;
+    var makes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Make>>(makesJson);
+}
+
+
+<hr />
+
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" name="CarID" value="@Model.CarID"/>
+            <input type="hidden" name="Photo" value="@Model.Photo" />
+
+            <div class="form row">
+                <div class="form-group col-md-3">
+                    <label asp-for="CarName" class="control-label">Tên ô tô</label>
+                    <input asp-for="CarName" class="form-control" />
+                    <span asp-validation-for="CarName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Photo" class="control-label">Hình ảnh</label>
+                    <input type="file" class="form-control" id="uploadimage" name="uploadimage">
+                    <span asp-validation-for="Photo" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="MakeID" class="control-label">Thương hiệu</label>
+
+                    <select asp-for="MakeID" class="form-control">
+                        <option value="">-- Chọn thương hiệu --</option>
+                        @foreach (Make i in makes)
+                        {
+                            <option value=@i.MakeID>@i.MakeName</option>
+
+                        }
+
+                        <!-- Thêm các tùy chọn khác tại đây -->
+                    </select>
+                    <span asp-validation-for="MakeID" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Price" class="control-label">Giá xe (VND)</label>
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form row">
+                <div class="form-group col-md-3">
+                    <label asp-for="Engine" class="control-label">Động cơ</label>
+                    <input asp-for="Engine" class="form-control" />
+                    <span asp-validation-for="Engine" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Seat" class="control-label">Số chỗ ngồi</label>
+                    <input asp-for="Seat" class="form-control" />
+                    <span asp-validation-for="Seat" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Dimension" class="control-label">Kích thước (A x B x C)</label>
+                    <input asp-for="Dimension" class="form-control" />
+                    <span asp-validation-for="Dimension" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Origin" class="control-label">Nguồn gốc</label>
+                    <input asp-for="Origin" class="form-control" />
+                    <span asp-validation-for="Origin" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class=" form row">
+                <div class="form-group col-md-3">
+                    <label asp-for="Topspeed" class="control-label">Tốc độ tối đa (Km/h)</label>
+                    <input asp-for="Topspeed" class="form-control" />
+                    <span asp-validation-for="Topspeed" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Capacity" class="control-label">Dung tích (L)</label>
+                    <input asp-for="Capacity" class="form-control" />
+                    <span asp-validation-for="Capacity" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="FuelConsumption" class="control-label">Tiêu thụ nhiên liệu (L/100Km)</label>
+                    <input asp-for="FuelConsumption" class="form-control" />
+                    <span asp-validation-for="FuelConsumption" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Color" class="control-label">Màu sắc</label>
+                    <input asp-for="Color" class="form-control" />
+                    <span asp-validation-for="Color" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form row">
+                <div class="form-group col-md-3">
+                    <label asp-for="Year" class="control-label">Năm sản xuất</label>
+                    <input asp-for="Year" class="form-control" />
+                    <span asp-validation-for="Year" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Quantity" class="control-label">Số lượng</label>
+                    <input asp-for="Quantity" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Description" class="control-label">Mô tả</label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form row" style="display: flex; justify-content: flex-end;">
+                <div class="form-group col-md-2">
+                    <button type="submit" class="btn btn-success form-control">Cập nhật</button>
+                </div>
+                <div class="form-group col-md-2">
+                    <a asp-controller="Car" asp-action="CarListTable" class="btn btn-danger border form-control">
+                        Quay lại danh sách
+                    </a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+

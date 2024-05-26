@@ -1,0 +1,212 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+	<title>DragonCar</title>
+	
+    <link href="~/images/dragoncar.png" rel="icon" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800&display=swap" rel="stylesheet" />
+    <link href="~/css/animate.css" rel="stylesheet"/>
+	<link href="~/css/aos.css" rel="stylesheet"/>
+    <link href="~/css/expand.scss" rel="stylesheet"/>
+	<link href="~/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    <link href="~/css/flaticon.css" rel="stylesheet" />
+	<link href="~/css/icomoon.css" rel="stylesheet"/>
+	<link href="~/css/ionicons.min.css" rel="stylesheet"/>
+	<link href="~/css/jquery.timepicker.css" rel="stylesheet"/>
+	<link href="~/css/magnific-popup.css" rel="stylesheet"/>
+	<link href="~/css/open-iconic-bootstrap.min.css" rel="stylesheet"/>
+	<link href="~/css/owl.carousel.min.css" rel="stylesheet"/>
+	<link href="~/css/owl.theme.default.min.css" rel="stylesheet"/>
+	<link href="~/css/site.css" rel="stylesheet" /> 
+	<link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/tintuc.css" rel="stylesheet" />
+    <link href="~/css/nice-select.css" rel="stylesheet" />
+    @RenderSection("NewStyles", required: false)
+    @RenderSection("AboutStyles",required:false)
+    @RenderSection("ContactStyles",required: false)
+    @RenderSection("CarStyles", required: false)
+  </head>
+  <body>
+      <!--Header-->
+    @* @if (ViewBag.HideHeader != null && !(bool)ViewBag.HideHeader)
+    { *@
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar ftco-navbar-light" id="ftco-navbar">
+                <div class="container">
+                    <a class="navbar-brand" href="@Url.Action("Index", "Home")">Dragon<span>Car</span></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fa-solid fa-bars"></i>Menu
+                    </button>
+                    <div class="collapse navbar-collapse" id="ftco-nav">
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item active"><a href="@Url.Action("Index", "Home")" class="nav-link">Trang Chủ</a></li>
+                            <li class="nav-item "><a href="@Url.Action("About", "Home")" class="nav-link">Giới Thiệu</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Index", "Car")" class="nav-link">Hãng Xe</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Index", "News")" class="nav-link">Tin Tức</a></li>
+							<li class="nav-item"><a href="@Url.Action("Index", "Contact")" class="nav-link">Liên Hệ</a></li>
+                        @if (Context.User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item nav-account">
+                                <a class="nav-link account-button">
+                                   <i class="fa-solid fa-user pr-2"></i>
+                                   Tài khoản</a>
+                                <ul class="sub-menu">
+                                    <li>Thông tin cá nhân</li>
+                                    <li>Đăng xuất</li>
+                                </ul>
+                            </li>
+                        }else{
+                            <li class="nav-item"><a href="@Url.Action("Login", "Account")" class="nav-link account-button">Đăng Nhập</a></li>
+                        }
+                        </ul>
+                    </div>
+
+                </div>
+
+            </nav>
+        </header>
+    @* } *@
+    
+    <main>
+       @RenderBody()
+    </main> 
+    <!--Footer-->
+
+    
+                           
+     <footer id = "footer" class="ftco-footer ftco-bg-dark ftco-section">
+        <section id="footertop" class="footer-top">
+            <div class="container">
+                <div class="footer_boxed">
+                    <div class="block footer_html">
+                        <div class="block_content">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                    <div class="service-body" >
+                                        
+                                        <div class="sb-text" >
+                                            <h5>MIỄN PHÍ BẢO DƯỠNG</h5>
+                                            <div style="display: flex; align-items: center;justify-content: center;">
+                                                <i class="fa-solid fa-truck" style="font-size: 40px;"></i>
+
+                                                <p>Trong 1000 km đầu tiên</p>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                    <div class="service-body" style="display: flex; align-items: center; justify-content: center;">
+                                        <i class="fa-solid fa-arrow-rotate-left" style="font-size: 40px;"></i>
+                                        <div class="sb-text">
+                                            <h5>MIỄN PHÍ TRẢ HÀNG</h5>
+                                            <p>Chính sách hoàn trả 90 ngày</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                    <div class="service-body " style="display: flex; align-items: center;justify-content: center;">
+                                        <i class="fa-solid fa-calendar-days" style="font-size: 40px;"></i>
+                                        <div class="sb-text">
+                                            <h5>CẬP NHẬT HÀNG NGÀY</h5>
+                                            <p>Những sản phẩm mới nhất</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                                    <div class="service-body" style="display: flex; align-items: center;justify-content: center;">
+                                    <i class="fa-solid fa-phone" style="font-size: 40px;"></i>
+                             
+                                        <div class="sb-text">
+                                            <h5>HỖ TRỢ 24/7</h5>
+                                            <p>Hotline: 0777 345 123</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="footercenter" class="footercenter">
+            <div class="container">
+
+                <div class="row mb-5">
+                    <div class="col-md">
+                        <div class="ftco-footer-widget mb-4">
+                            <h2 class="ftco-heading-2"><a href="#" class="logo">DRAGON<span>CAR</span></a></h2>
+                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+                            <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
+                                <li class="ftco-animate"><a href="#"><i class="fa-brands fa-twitter" style="font-size:30px"></i></a></li>
+                                <li class="ftco-animate"><a href="#"><i class="fa-brands fa-facebook-f" style="font-size:30px"></i></a></li>
+                                <li class="ftco-animate"><a href="#"><i class="fa-brands fa-instagram" style="font-size:30px"></i></span></a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md">
+                        <div class="ftco-footer-widget mb-4">
+                            <h2 class="ftco-heading-2">Liên Hệ</h2>
+                            <div class="block-23 mb-3">
+                                <ul>
+                                    <li><a><i class="fa-solid fa-location-dot pr-2"></i><span class="text">811-813 Nguyễn Văn Linh, Q. Hải Châu, Tp. Đà Nẵng</span></a></li>
+                                    <li><a href="#"><i class="fa-solid fa-phone pr-2"></i><span class="text">0777 345 123</span></a></li>
+                                    <li><a href="#"><i class="fa-solid fa-envelope pr-2"></i><span class="text">giamdoc@gmail.com</span></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+
+                        <p>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <a href="@Url.Action("CarListTable", "Car")" style="background-color: darkred; color: white; padding: 10px 20px; text-decoration: none; display: inline-block;border-radius: 5px;">Đến trang quản lý</a>
+
+        
+    </footer> 
+    
+  
+
+  <!-- loader -->
+  
+
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery-migrate-3.0.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.easing.1.3.js"></script>
+    <script src="/js/jquery.waypoints.min.js"></script>
+    <script src="/js/jquery.stellar.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/jquery.magnific-popup.min.js"></script>
+    <script src="/js/aos.js"></script>
+    <script src="/js/jquery.animateNumber.min.js"></script>
+    <script src="/js/bootstrap-datepicker.js"></script>
+    <script src="/js/jquery.timepicker.min.js"></script>
+    <script src="/js/scrollax.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+    <script src="/js/google-map.js"></script>
+    <script src="/js/main.js"></script>
+	<script src="/js/site.js"></script> 
+	<script src="/js/app.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+  </body>
+</html>

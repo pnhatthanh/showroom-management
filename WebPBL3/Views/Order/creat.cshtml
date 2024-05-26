@@ -1,0 +1,368 @@
+﻿@using System.Text.Json
+@model WebPBL3.DTO.OrderDTO;
+@{
+    ViewData["Title"] = "Tạo đơn hàng";
+    Layout = "_AdminLayout";
+    double totalPrice = 0;
+    int count = 0;
+}
+<div class="card shadow border-0">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Tạo hóa đơn</h2>
+            </div>
+        </div>
+    </div>
+    <form id="myForm" method="post">
+        <div class="row p-3">
+            <div class="col-lg-6 row">
+                <div class="col-12">
+                    <h4>Thông tin khách hàng</h4>
+                </div>
+                <div class="col-12" style="font-size: 15px">
+                    <p>(Khách hàng đã có tài khoản. Nhập địa chỉ email:<input name="existEmail" placeholder="Email" id="txtSearch">)</p>
+                </div>
+                
+                <div class="col-6 mb-2">
+                    <label asp-for="FullName"></label>
+                    <span asp-validation-for="FullName" class="d-block text-danger"></span>
+                    <input asp-for="FullName" value="@Model?.FullName" type="text" class="form-control">
+                </div>
+                <div class="col-6 mb-2">
+                    <label asp-for="IdentityCard"></label>
+                    <span asp-validation-for="IdentityCard" class="text-danger d-block"></span>
+                    <input asp-for="IdentityCard" value="@Model?.IdentityCard" class="form-control">
+                </div>
+                <div class="col-6 mb-2">
+                    <label asp-for="PhoneNumber"></label>
+                    <span asp-validation-for="PhoneNumber" class="text-danger d-block"></span>
+                    <input asp-for="PhoneNumber" value="@Model?.PhoneNumber" class="form-control">
+                </div>
+                <div class="col-6 mb-2">
+                    <label asp-for="Email"></label>
+                    <span asp-validation-for="Email" class="text-danger d-block"></span>
+                    <input asp-for="Email" value="@Model?.Email" class="form-control">
+                </div>
+                <div class="col-6 mb-2">
+                    <label>Địa chỉ</label>
+                    <span asp-validation-for="Address" class="text-danger d-block"></span>
+                    <input placeholder="Số nhà, đường" class="form-control" id="street" asp-for="Address">
+                </div>
+                <div class="col-6 mb-2">
+                    <label>&nbsp;</label>
+                    <div>
+                        <span asp-validation-for="ProvinceID" class="text-danger d-block"></span>
+                        <select class="form-select form-control" id="city" asp-for="ProvinceID">
+                            <option value="0" selected>Tỉnh thành</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-6 mb-2">
+                    <span asp-validation-for="DistrictID" class="text-danger d-block"></span>
+                    <select class="form-select form-control" id="district" asp-for="DistrictID">
+                        <option value="0" selected>Quận huyện</option>
+                    </select>
+                </div>
+                <div class="col-6 mb-2">
+                    <span asp-validation-for="WardID" class="text-danger d-block"></span>
+                    <select class="form-select form-control" id="ward" asp-for="WardID">
+                        <option value="0" selected>Xã phường</option>
+                    </select>
+                </div>
+                <div class="col-12 mt-3">
+                    <h4>Thêm sản phẩm</h4>
+                </div>
+                    <div class="row align-items-end col-12">
+                        <div class="col-12">
+                            <span id="error-add-item" class="text-danger d-block"></span>
+                        </div>
+                        <div class="col-4">
+                            <label>Mã xe</label>
+                            <input id="car_id" name="CarID" class="form-control">
+                        </div>
+                        <div class="col-4">
+                            <label>Số luọng</label>
+                            <input id="car_quantity" name="quantity" class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <button type="button" onclick="addNewItem()" @* onclick="submitForm('@Url.Action("AddItem", "Order")')" *@ class="btn btn-success mr-2">Thêm ô tô</button>
+                        </div>
+                    </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="col-12">
+                    <h4>Thông tin đơn hàng</h4>
+                </div>
+                <div class="form-group col-12 row">
+                    <label class="col-4">Ngày tạo đơn hàng: </label>
+                    <div class="col-4">
+                        <input type="date" asp-for="Date" class="form-control">
+                    </div>
+                </div>
+                <span asp-validation-for="items" class="text-danger col-12 d-block"></span>
+                <table class="table table-striped col-12 p-2">
+                    <thead>
+                        <tr>
+                            <th>
+                                STT
+                            </th>
+                            <th>
+                                Tên xe
+                            </th>
+                            <th>
+                                Số lượng
+                            </th>
+                            <th>
+                                Đơn giá
+                            </th>
+                            <th>
+                                Thành tiền
+                            </th>
+                            <th>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id ="itemTable">
+                        @if (Model.items.Count != 0)
+                        {
+                            
+                            foreach (var car in Model.items)
+                            {
+                                totalPrice += car.price * car.quantity;
+                                <tr>
+                                    <input asp-for="items[count].carID" hidden />
+                                    <input asp-for="items[count].carName" hidden />
+                                    <input asp-for="items[count].price" hidden />
+                                    <input asp-for="items[count].quantity" hidden />
+                                     <td>@(++count)</td>
+                                    <td>@car.carName</td>
+                                    <td>@car.quantity</td>
+                                    <td>@car.price.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</td>
+                                    <td>@((car.price * car.quantity).ToString("C", new System.Globalization.CultureInfo("vi-VN")))</td>
+                                    <td>
+                                        <a class="btn btn-danger delete-item" data-car-id="@car.carID">
+                                            <i class="fa-solid fa-trash"></i>
+                                            Xóa
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <div class="col-12 text-end">
+                    <input asp-for="Totalprice" value="@totalPrice" hidden />
+                    <h5 style="text-align: end">Tổng tiền: <span id="display_total">@totalPrice.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</span></h5>
+                </div>
+                <div class="col-12 row mt-2">
+                    <span asp-validation-for="Status" class="text-danger col-12 d-block"></span>
+                    <label class="col-5">Trạng thái thanh toán:</label>
+                    <select class=" col-4 form-select form-select" asp-for="Status">
+                        <option value="" selected>Tình trạng</option>
+                        <option value="Đã thanh toán">Đã thanh toán</option>
+                        <option value="Chưa thanh toán">Chưa thanh toán</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+        <div class="row col-12 d-flex justify-content-center mt-4">
+            <button type="submit" onclick="submitForm('@Url.Action("Creat", "Order")')" class="btn btn-primary col-3 mr-2">Tạo hóa đơn</button>
+            <a asp-action="Index" asp-controller="Order" class="btn btn-danger col-3">Hủy</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    var cities = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
+    var address = document.getElementById("address");
+    var street = document.getElementById("street");
+    var errorItem = document.getElementById("error-add-item");
+    var totalprice = document.getElementById("Totalprice");
+    var displayTotal = document.getElementById("display_total");
+    var table = document.getElementById('itemTable');
+    function submitForm(action) {
+        document.getElementById('myForm').action = action;
+        document.getElementById('myForm').submit();
+    }
+    async function getData() {
+        try {
+            const response = await fetch("/Order/GetProvince");
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function getDistrict(id) {
+        try {
+            const response = await fetch(`/Order/GetDistrict/${id}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function getWard(id) {
+        try {
+            const response = await fetch(`/Order/GetWard/${id}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function renderCities() {
+        const res = await getData();
+        res.forEach(city => {
+            cities.options[cities.options.length] = new Option(city.provinceName, city.provinceID);
+        });
+        if ('@Model.ProvinceID' && '@Model.ProvinceID' !== '0') {
+            cities.value = @Model.ProvinceID;
+            const listDistrict = await getDistrict(cities.value);
+            listDistrict.forEach(district => {
+                districts.options[districts.options.length] = new Option(district.name, district.id);
+            });
+        }
+        cities.addEventListener('change', async () => {
+            districts.options.length = 1;
+            wards.options.length = 1;
+            const listDistrict = await getDistrict(cities.value);
+            listDistrict.forEach(district => {
+                districts.options[districts.options.length] = new Option(district.name, district.id);
+            });
+        })
+        districts.addEventListener('change', async () => {
+            wards.options.length = 1;
+            const listWard = await getWard(districts.value);
+            listWard.forEach(ward => {
+                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+            });
+        })
+        if ('@Model.DistrictID' !== '0') {
+            districts.value = @Model.DistrictID;
+            const listWard = await getWard(districts.value);
+            listWard.forEach(ward => {
+                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+            });
+        }
+        if ('@Model.WardID' !== '0') {
+            wards.value = @Model.WardID;
+        }
+    }
+    renderCities();
+    document.getElementById("txtSearch").addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            var url = '@Url.Action("ExtractEmail", "Order")'
+            document.getElementById('myForm').action = url;
+            document.getElementById('myForm').submit();
+        }
+    });
+    var count = @count;
+    var toltal = @Model.Totalprice;
+    const _items = @Html.Raw(JsonSerializer.Serialize(Model.items));
+    function refreshListItem() {
+        const list_tr = Array.from(table.getElementsByTagName('tr'));
+        list_tr.forEach((e, index) => {
+            list_tr[index].innerHTML = '<input name="items[' + index + '].carID" value="' + _items[index].carID + '" hidden />' +
+                '<input name="items[' + index + '].price" value="' + _items[index].price + '" hidden />' +
+                '<input name="items[' + index + '].carName" value="' + _items[index].carName + '" hidden />' +
+                '<input name="items[' + index + '].quantity" value="' + _items[index].quantity + '" hidden />' +
+                '<td>' + (index + 1) + '</td>' +
+                '<td>' + _items[index].carName + '</td>' +
+                `<td>${_items[index].quantity}</td>` +
+                `<td>${_items[index].price.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>` +
+                `<td> ${(_items[index].price * _items[index].quantity).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>` +
+                `<td>
+                         <a class= "btn btn-danger delete-item" data-car-id=${_items[index].carID} >
+                     <i class="fa-solid fa-trash" > </i>
+                                 Xóa
+                     </a>
+                 </td>`;
+        })
+        var deleteItems = document.querySelectorAll(".delete-item");
+        deleteItems.forEach(item => {
+            item.addEventListener('click', handleDeleteItem)
+        })
+    }
+
+    function appendItem(item) {
+        var newRow = document.createElement('tr');
+        newRow.innerHTML = '<input name="items[' + count + '].carID" value="' + item.carID + '" hidden />' +
+            '<input name="items[' + count + '].price" value="' + item.price + '" hidden />' +
+            '<input name="items[' + count + '].carName" value="' + item.carName + '" hidden />' +
+            '<input name="items[' + count + '].quantity" value="' + item.quantity + '" hidden />' +
+            '<td>' + (count + 1) + '</td>' +
+            '<td>' + item.carName + '</td>' +
+            `<td>${item.quantity}</td>` +
+            `<td>${item.price.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>` +
+            `<td> ${(item.price * item.quantity).toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}</td>` +
+            `<td>
+                 <a class= "btn btn-danger delete-item" data-car-id=${item.carID} >
+                 <i class="fa-solid fa-trash" > </i>
+                             Xóa
+                 </a>
+             </td>`;
+        count++;
+        toltal += item.price*item.quantity
+        totalprice.value = toltal;
+        displayTotal.textContent = `${toltal.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}`
+        table.appendChild(newRow);
+    }
+     const handleDeleteItem =(e)=>{
+        e.preventDefault();
+        const list_tr = Array.from(table.getElementsByTagName('tr'));
+        const row = e.target.closest('tr');
+        const i = list_tr.indexOf(row);
+        toltal -= _items[i].price * _items[i].quantity
+        _items.splice(i, 1);
+        totalprice.value = toltal;
+        displayTotal.textContent = `${toltal.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}`
+        if (row) {
+            row.remove();
+            refreshListItem();
+        }
+    };
+    function addNewItem() {
+        const car = document.getElementById('car_id').value;
+        const quantity = document.getElementById('car_quantity').value;
+        fetch('/Order/AddItem', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                CarID: car,
+                quantity: quantity
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(err=>{
+                        throw new Error(err);
+                    })
+                }
+                return response.json();
+            })
+            .then(data => {
+                appendItem(data);
+                _items.push(data);
+                refreshListItem();
+                errorItem.textContent = "";
+                car.value = "";
+                quantity.value = "";
+                var deleteItems = document.querySelectorAll(".delete-item");
+                deleteItems.forEach(item => {
+                    item.addEventListener('click',handleDeleteItem)
+                })
+            })
+            .catch(error => {
+                errorItem.textContent = error.message;
+            });
+    }
+ </script>

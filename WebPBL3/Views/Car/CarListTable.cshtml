@@ -1,0 +1,236 @@
+﻿  @model List<CarDto>
+@{
+    ViewData["Title"] = "Quản lý ô tô";
+    Layout = "_AdminLayout";
+    var makesJson = TempData["makes"] as string;
+    TempData.Keep("makes");
+    var makes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Make>>(makesJson);
+    int page = ViewBag.currentPage;
+    int total = ViewBag.totalPage;
+    int makeid = ViewBag.makeid;
+    string searchtxt = ViewBag.searchtxt;
+
+}
+
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Danh sách ô tô</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-4">
+                <div class=" input-group rounded">
+                    <input type="text" id="txtSearch" class="form-control rounded" placeholder="Search"  aria-label="Search" aria-describedby="search-addon" value="@searchtxt"/>
+                    <span class="input-group-text border-0" id="search-addon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
+            </div>
+            <div class="col-2">
+                <select class="form-control rounded" id="makeSelect">
+                    <option value="0" >Tất cả hãng xe</option>
+                    @foreach (var i in makes)
+                    {   
+                        @if (i.MakeID == makeid)
+                        {
+                            <option value="@i.MakeID" selected>@i.MakeName</option>
+                        } else
+                        {
+                            <option value="@i.MakeID">@i.MakeName</option>
+                        }
+
+                    }
+                </select>
+            </div>
+            <div class="col-6 text-end" style="text-align: right;">
+                <a asp-controller="Car" asp-action="Create" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i>  Thêm sản phẩm
+                </a>
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        STT
+                    </th>
+                    <th>
+                        Mã xe
+                    </th>
+                    <th>
+                        Ảnh
+                    </th>
+                    <th>
+                        Tên xe
+                    </th>
+                    <th>
+                        Thương hiệu
+                    </th>
+                    <th>
+                        Giá
+                    </th>
+                    <th>
+                        Số chỗ ngồi
+                    </th>
+                    <th>
+                        Số lượng
+                    </th>
+                    <th>
+
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody id="myTable">
+
+                @foreach (var obj in Model.OrderBy(u => u.CarID))
+                {
+                    <tr>
+                        <td>@obj.STT</td>
+                        <td>@obj.CarID</td>
+						<td>
+                            <img src="~/upload/car/@obj.Photo" width="60" style="height:auto;" />
+                        </td>
+                        <td>
+                            @obj.CarName
+                        </td>
+                        <td>
+                            @obj.MakeName
+                        </td>
+                        <td>
+                            @obj.Price
+                        </td>
+                        <td>
+                            @obj.Seat
+                        </td>
+                        <td>
+                            @obj.Quantity
+                        </td>
+
+
+                        <td>
+                            <div class="btn-group" role="group" styke="gap: 10px">
+                                <a asp-controller="Car" asp-action="Details" asp-route-id="@obj.CarID" class="btn btn-outline-success">
+                                    <i class="fa-solid fa-eye"></i>
+                                    Chi tiết
+                                </a>
+
+                                <!-- Sử dụng icon pen cho Cập nhật -->
+                                <a asp-controller="Car" asp-action="Edit" asp-route-id="@obj.CarID" class="btn btn-warning">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                    Cập nhật
+                                </a>
+
+                                <!-- Sử dụng icon trash cho Xóa -->
+                                
+                                <a href=" #myModal" class="btn btn-danger" data-toggle="modal" >
+                                    <i class="fa-solid fa-trash"></i>
+                                    Xóa
+                                </a>
+                                
+                                <div id="myModal" class="modal fade">
+                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div class="icon-box" style="margin-right: 10px;">
+                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;" ></i>
+                                                </div>
+                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể hoàn tác.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a asp-controller="Car" asp-action="Delete" asp-route-id="@obj.CarID" class="btn btn-danger">
+                                                    Xác nhận
+                                                </a>
+                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
+                                           
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+    @if (total>0) {
+    <ul style="display: flex; justify-content: center; align-items: center; padding: 0; margin-top: 10px; list-style: none;">
+            <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;"><a asp-action="CarListTable" asp-route-makeid="@makeid" asp-route-search="@searchtxt" asp-route-page="@(page - 1)" class="prev" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">&laquo</a></li>
+            @for (int i = 1; i <= total; i++)
+            {
+                @if (i == page)
+                {
+                <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;background-color: #37B247;">
+                        <a asp-action="CarListTable" asp-route-makeid="@makeid" asp-route-search="@searchtxt" asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                        @i
+                </a>
+                </li>
+                }
+                else
+                {
+                <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;">
+                    <a asp-action="CarListTable" asp-route-makeid="@makeid" asp-route-search="@searchtxt" asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                        @i
+                    </a>
+                </li>
+                    
+                }
+            }
+            <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;"><a asp-action="CarListTable" asp-route-makeid="@makeid" asp-route-search="@searchtxt" asp-route-page="@(page + 1)" class="next" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">&raquo;</a></li>
+     </ul>
+     }
+       
+</div>
+
+
+<script>
+
+    document.getElementById("txtSearch").addEventListener("keydown", function (event) {
+        if (event.keyCode === 13) {
+            // Lấy giá trị từ txtSearch
+            var searchValue = this.value;
+            var makeValue = document.getElementById("makeSelect").value;
+            // Tạo URL với tham số makeid và searchValue
+            var url = "/Car/CarListTable?makeid=" + makeValue + "&searchtxt=" + searchValue;
+
+            // Chuyển hướng đến URL
+            window.location.href = url;
+        }
+    });
+
+    document.getElementById("makeSelect").addEventListener("change", function () {
+        
+        // Lấy giá trị từ makeSelect
+        var makeValue = this.value;
+        var searchValue = document.getElementById("txtSearch").value;
+        // Tạo URL với tham số makeValue và searchValue
+        var url = "/Car/CarListTable?makeid=" + makeValue + "&searchtxt=" + searchValue;
+
+        // Chuyển hướng đến URL
+        window.location.href = url;
+    });
+    @* document.addEventListener("DOMContentLoaded", function () {
+        // Lấy tham chiếu đến ô nhập liệu
+        var searchInput = document.getElementById("txtSearch");
+
+        // Đặt con trỏ (cursor) vào cuối giá trị của ô nhập liệu
+        if (searchInput) {
+            searchInput.focus(); // Tập trung vào ô nhập liệu
+            searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length); // Đặt con trỏ ở cuối giá trị
+        }
+    }); *@
+</script>

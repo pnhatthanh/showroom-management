@@ -1,0 +1,134 @@
+﻿@model WebPBL3.Models.AddStaffDTO
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<hr />
+<div class="container-xl px-4 mt-4">
+    <hr class="mt-0 mb-4">
+    <div class="row">
+        <div class="col-xl-4">
+            <!-- Profile picture card-->
+            <div class="card mb-4 mb-xl-0">
+                <div class="card-body text-center">
+
+                    <!-- Profile picture image-->
+                    <img class="img-account-profile rounded-circle mb-2" src="/upload/staff/@ViewData["Photo"]" style=" width: 200px;height:200px;" alt="">
+                    <!-- Profile picture help block-->
+
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <!-- Account details card-->
+            <div class="card mb-4">
+                <div class="card-header">Thông tin chi tiết</div>
+                <div class="card-body">
+                    <!-- Form Row-->
+                    <div class="row gx-3 mb-3">
+                        <!-- Form Group (first name)-->
+                        <div class="col-md-6">
+                            <label class="left">Họ và Tên</label>
+                            <div class="form-control">@Model.FullName</div>
+
+                        </div>
+                        <!-- Form Group (last name)-->
+                        <div class="col-md-6">
+                            <label class="control-label">Email</label>
+                            <div class="form-control">@Model.Email</div>
+
+                        </div>
+                    </div>
+                    <!-- Form Row        -->
+                    <div class="row gx-3 mb-3">
+                        <!-- Form Group (organization name)-->
+                        <div class="col-md-6">
+                            <label class="control-label">Số điện thoại</label>
+                            <div class="form-control">@Model.PhoneNumber</div>
+
+                        </div>
+                        <!-- Form Group (location)-->
+                        <div class="col-md-6">
+                            <label class="control-label">CCCD</label>
+                            <div class="form-control">@Model.IdentityCard</div>
+
+                        </div>
+                    </div>
+                    <!-- Form Row        -->
+                    <div class="row gx-3 mb-3">
+                        <!-- Form Group (organization name)-->
+                        <div class="col-md-6">
+                            <label class="control-label">Giới tính</label>
+                            @if (Model.Gender == true)
+                            {
+                                <div class="form-control">Nam</div>
+                            }
+                            else
+                            {
+                                <div class="form-control">Nữ</div>
+                            }
+
+                        </div>
+                        <!-- Form Group (location)-->
+                        <div class="col-md-6">
+                            <label class="control-label">Ngày sinh</label>
+                            <div class="form-control">@Model.BirthDate </div>
+
+                        </div>
+                    </div>
+                    <div class="row gx-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="control-label">Vị trí</label>
+                            <div class="form-control">@Model.Position</div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label">Lương</label>
+                            <div class="form-control">@Model.Salary</div>
+
+                        </div>
+                    </div>
+                    <div class="row gx-3 mb-3">
+
+                        <div class="col-md-6">
+
+                            <label class="control-label">Tên tỉnh(Thành phố)</label>
+                            <div class="form-control">@Model.ProvinceName</div>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="control-label">Tên quận(huyện)</label>
+                            <div class="form-control">@Model.DistrictName </div>
+
+                        </div>
+                    </div>
+                    <div class="row gx-3 mb-3">
+
+                        <div class="col-md-6">
+                            <label class="control-label">Tên xã(phường)</label>
+                            <div class="form-control">@Model.WardName </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="control-label">Số nhà, đường</label>
+                            <div class="form-control">@Model.Address </div>
+
+                        </div>
+                    </div>
+                    <div class="form row" style="display: flex; justify-content: flex-end;">
+                        <div class="form-group col-md-3">
+                            <a asp-controller="Staff" asp-action="listStaffs" class="btn btn-danger border form-control">
+                                Quay lại
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

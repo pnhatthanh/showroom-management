@@ -1,0 +1,179 @@
+﻿@model List<Feedback>
+@{
+    ViewData["Title"] = "Quản lý phản hồi";
+    Layout = "_AdminLayout";
+    int count = 1;
+    var title=ViewBag.TitleMessage;
+    var date = ViewBag.DateMessage;
+}
+<div class="card shadow border-0">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Danh sách các phản hồi</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4">
+        <div class="row pb-3 mb-2">
+                <div class="col-6 d-flex justify-content-around align-item-center">
+                    <div class="input-group col-6">
+                        <input id="searchTitle" type="text" class="form-control" placeholder="Tiêu đề" value="@title" />
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <a id="search"><i class="fa-solid fa-magnifying-glass"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <input value="@date" type="date" class="form-control" id="searchDate">
+                     </div>
+                </div>
+        </div>
+        <table class="table table-striped">
+            <thead>
+
+                <tr>
+                    <th>
+                        STT
+                    </th>
+                    <th>
+                        Người gửi
+                    </th>
+                    <th>
+                        Tiêu đề
+                    </th>
+                    <th>
+                        Ngày gửi
+                    </th>
+                    <th>
+                        Đánh giá
+                    </th>
+                    <th>
+                        Tình trạng
+                    </th>
+                    <th>
+                        
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model)
+                {
+                    <tr>
+                        <td>@(count++)</td>
+                        <td>@obj.FullName</td>
+                        <td>@obj.Title</td>
+                        <td>@obj.CreateAt</td>
+                        <td class="text-warning">
+                            @for(int i = 0; i < obj.Rating; i++)
+                            {
+                                <i class="fa-solid fa-star" id="star"></i>
+                            }
+                            @for(int i = obj.Rating; i < 5; i++)
+                            {
+                                <i class="fa-regular fa-star" id="star"></i>
+                            }
+                        </td>
+                        <td>@obj.Status</td>
+                        <td>
+                            <div class="w-75 d-flex justify-content-around btn-group" role="group">
+                                <a onclick="detailFeedback('@obj.FeedbackID')" class="btn btn-success">
+                                    <i class="fa-solid fa-eye"></i>
+                                    Xem
+                                </a>
+                                <a class="btn btn-danger" id="deleteButton" asp-controller="Contact" asp-action="DeleteFeedback" asp-route-id="@obj.FeedbackID">
+                                        <i class="fa-solid fa-trash"></i>
+                                        Xóa
+                                 </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div id="modal-message" class="modal-message">
+    <div id="box-message" class="modal-content-message">
+        <div class="modal-header-message">
+            <h2 id="title-message"></h2>
+
+        </div>
+        <div class="modal-body-message">
+            <div class="row message-item">
+                <label for="inputEmail3" class="col-sm-4">Người gửi:</label>
+                <div class="col-sm-8">
+                    <p id="name-customer"></p>
+                </div>
+            </div>
+            <div class="row message-item">
+                <label for="inputEmail3" class="col-sm-4">Email:</label>
+                <div class="col-sm-8">
+                    <p id="email-message"></p>
+                </div>
+            </div>
+            <div class="row message-item">
+                <label for="inputEmail3" class="col-sm-4">Nội dung:</label>
+                <div class="col-sm-8">
+                    <p id="content-message"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var modal = document.getElementById("modal-message");
+    var box = document.getElementById('box-message');
+
+    var content = document.getElementById('content-message');
+    var title = document.getElementById('title-message');
+    var email = document.getElementById('email-message');
+    var name_customer = document.getElementById('name-customer');
+
+     async function detailFeedback(id) {
+         try {
+             console.log ( "Hello");
+            const response = await fetch(`/Contact/getFeedbackById/${id}`);
+            if (!response.ok) {
+                throw new Error("Lấy dữ liệu không thành công");
+            }
+            const data = await response.json();
+            console.log(data);
+            modal.style.display = 'block';
+
+            title.textContent = data.title;
+            content.textContent = data.content;
+            email.textContent = data.email;
+            name_customer.textContent = data.fullName;
+
+         }catch(error){
+             alert("Xảy ra lỗi: " + error);
+         }
+         
+    }
+    modal.addEventListener('click', () => {
+        modal.style.display = 'none';
+        window.location.reload();
+    })
+    box.addEventListener('click', (e) => {
+        e.stopPropagation();
+    })
+
+    document.getElementById('searchDate').addEventListener('change', () => {
+        var searchDate = document.getElementById('searchDate').value;
+        var searchTitle = document.getElementById('searchTitle').value;
+        var url = '/Contact/ListFeedback?date=' + searchDate+"&title="+searchTitle;
+        window.location.href = url;
+    })
+    document.getElementById('searchTitle').addEventListener('keydown', (e) => {
+        if (e.keyCode === 13) { 
+            var searchDate = document.getElementById('searchDate').value;
+            var searchTitle = document.getElementById('searchTitle').value;
+            var url = '/Contact/ListFeedback?date=' + searchDate + "&title=" + searchTitle;
+            window.location.href = url;
+        }
+    })
+</script>
+

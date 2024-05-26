@@ -1,0 +1,22 @@
+﻿.bg-breadcrumb {
+    background: linear-gradient(rgba(78, 99, 142, 0.5), rgba(105, 132, 185, 0.5)), url('/images/bg-contact.jpeg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 80vh;
+}
+.form-control {
+    background: rgba(255, 255, 255, 0.2);
+    border: solid 1px;
+    color: black;
+}
+.form-control:focus {
+     background: rgba(255, 255, 255, 0.3);
+     border: solid 1px;
+     box-shadow: none;
+     color: black;
+}
+.form-control::placeholder{
+    color: gray;
+
+}

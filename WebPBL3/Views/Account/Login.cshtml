@@ -1,0 +1,35 @@
+﻿@model WebPBL3.ViewModel.LoginVM;
+
+<div class="login-context">
+    <div class="login-container">
+        <img src="/images/vector-logo.png" alt="Showroom Logo" class="car-logo">
+        <h2 style="text-align: center">Đăng Nhập</h2>
+        <form method="post" asp-action="Login">
+            @if (TempData["Error"] != null)
+            {
+                <div class="text-danger">
+                    <span><b>Xin lỗi!</b> - @TempData["Error"] </span>
+                </div>
+            }
+            <div class="form-group">
+                <label for="email" asp-for="Email">Email:</label>
+                <span asp-validation-for="Email" class="text-danger d-block"></span>
+                <input type="email" class="form-control" id="email" asp-for="Email" placeholder="Nhập địa chỉ email của bạn">
+            </div>
+            <div class="form-group">
+                <label for="pwd" asp-for="Password">Mật khẩu:</label>
+                <span asp-validation-for="Password" class="text-danger d-block"></span>
+                <input type="password" class="form-control" id="pwd" asp-for="Password" placeholder="Nhập mật khẩu của bạn">
+            </div>
+            <div class="form-group" style="text-align: right;">
+                <a asp-action="ForgotPassword" class="forgot-pass">Quên mật khẩu</a>
+            </div>
+            <button type="submit" class="btn btn-custom btn-block">Đăng Nhập</button>
+        </form>
+        <div class="footer">
+            <p>
+                Chưa có tài khoản? <a href="@Url.Action("Register", "Account")">Đăng kí ngay</a>
+            </p>
+        </div>
+    </div>
+</div>

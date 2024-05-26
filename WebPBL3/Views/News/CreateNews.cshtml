@@ -1,0 +1,33 @@
+﻿@* <!-- Modal -->
+<div class="modal fade" id="createNewsModal" tabindex="-1" aria-labelledby="createNewsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createNewsModalLabel" style="text-align: center; width: 100%">Thêm mới tin tức</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form để nhập thông tin tin tức -->
+                <form asp-action="Create" method="post">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Tiêu đề</label>
+                        <input type="text" class="form-control" id="title" name="Title">
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Nội dung</label>
+                        <textarea class="form-control" id="content" name="Content"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">Ảnh</label>
+                        <input type="file" class="form-control" id="photo" name="Photo">
+                    </div>
+                    <!-- Các trường khác của tin tức -->
+                    <!-- ... -->
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+ *@

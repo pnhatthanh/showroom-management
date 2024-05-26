@@ -1,0 +1,472 @@
+﻿@using WebPBL3.DTO.Statistic
+@model Tuple<IEnumerable<StatisticMake>, IEnumerable<StatisticRevenue>,IEnumerable<StatisticTable>>
+
+
+
+@{
+    ViewData["Title"] = "Quản lý thống kê";
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var staffTotal = ViewBag.staffTotal;
+    var carTotal = ViewBag.carTotal;
+    var userTotal = ViewBag.userTotal;
+    var feedbackTotal = ViewBag.feedbackTotal;
+    var statisticMakes = ViewBag.statisticMakes as List<StatisticMake>;
+    var statisticRevenues = ViewBag.statisticRevenues as List<StatisticRevenue>;
+    var statisticTables = ViewBag.statisticTables as List<StatisticTable>;
+
+    var makeNames = statisticMakes.Select(sm => sm.MakeName).ToList();
+    var makeQuantities = statisticMakes.Select(sm => sm.Quantity).ToList();
+    var makeRevenues = statisticMakes.Select(sm => sm.Revenue).ToList();
+
+    var monthNames = statisticRevenues.Select(sm => sm.Month).ToList();
+    var monthQuantities = statisticRevenues.Select(sm => sm.Quantity).ToList();
+    var monthRevenues = statisticRevenues.Select(sm => sm.Revenue).ToList();
+
+    var sTTs = statisticTables.Select(st => st.STT).ToList();
+    var dates = statisticTables.Select(st => st.Date).ToList();
+    var carIDs = statisticTables.Select(st => st.CarID).ToList();
+    var _makeNames = statisticTables.Select(st => st.MakeName).ToList();
+    var staffIDs = statisticTables.Select(st => st.StaffID).ToList();
+    var quantitys = statisticTables.Select(st => st.Quantity).ToList();
+    var prices = statisticTables.Select(st => st.Price).ToList();
+    var totals = statisticTables.Select(st => st.Total).ToList();
+
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="https://cdn.datatables.net/datetime/1.5.2/js/dataTables.dateTime.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<div class="full_container">
+    <div class="inner_container">
+        <!-- dashboard inner -->
+        <div class="midde_cont">
+            <div class="container-fluid">
+                <div class="row column_title">
+                    <div class="col-md-12">
+                        <div class="page_title">
+                            <h2>Thống kê doanh thu</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+
+            <div class="row column1">
+                <div class="col-md-6 col-lg-3">
+                    <div class="full counter_section margin_bottom_30">
+                        <div class="couter_icon">
+                            <div>
+                                <i class="fa-solid fa-clipboard-user red_color"></i>
+                            </div>
+                        </div>
+                        <div class="counter_no">
+                            <div>
+                                <p class="total_no">@staffTotal</p>
+                                <p class="head_couter">Số lượng nhân viên</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="full counter_section margin_bottom_30">
+                        <div class="couter_icon">
+                            <div>
+                                <i class="fa-solid fa-user orange_color"></i>
+                            </div>
+                        </div>
+                        <div class="counter_no">
+                            <div>
+                                <p class="total_no">@userTotal</p>
+                                <p class="head_couter">Số lượng khách hàng</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="full counter_section margin_bottom_30">
+                        <div class="couter_icon">
+                            <div>
+                                <i class="fa-solid fa-car green_color"></i>
+                            </div>
+                        </div>
+                        <div class="counter_no">
+                            <div>
+                                <p class="total_no">@carTotal</p>
+                                <p class="head_couter">Số lượng xe</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="full counter_section margin_bottom_30">
+                        <div class="couter_icon">
+                            <div>
+                                <i class="fa-solid fa-comments yellow_color"></i>
+                            </div>
+                        </div>
+                        <div class="counter_no">
+                            <div>
+                                <p class="total_no">@feedbackTotal</p>
+                                <p class="head_couter">Số lượng phản hồi</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row column2 graph margin_bottom_30">
+                <div class="col-md-l2 col-lg-12">
+                    <div class="white_shd full">
+                        <div class="full graph_head">
+                            <div class="heading1 margin_0">
+                                <h2>Doanh thu và số lượng xe bán ra theo hãng xe trong 12 tháng gần nhất</h2>
+                            </div>
+                        </div>
+                        <div class="full graph_revenue">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="content">
+                                        <div class="area_chart">
+                                            <canvas height="120" id="makeChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row column2 graph margin_bottom_30">
+                <div class="col-md-l2 col-lg-12">
+                    <div class="white_shd full">
+                        <div class="full graph_head">
+                              <div class="heading1 margin_0">
+                                  <h2>Doanh thu và số lượng xe bán ra trong 12 tháng gần nhất</h2>
+                              </div> 
+                        </div>
+
+                           
+                        <div class="full graph_revenue">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="content">
+                                        <div class="area_chart">
+                                            <canvas height="120" id="revenueChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+            <div class="row column4 graph">
+
+                <div class="dash_blog">
+                    <div class="dash_blog_inner">
+                        <div class="dash_head" style="display: flex;">
+                            
+                            <h3><span><i class="fa fa-comments-o"></i> Bảng doanh thu chi tiết</span></h3>
+                            <div style="margin-left: auto;">
+                                <form id="myForm" method="post" asp-controller="Statistic" asp-action="SaveExcel">
+                                    <button style="border-radius: 5px;">
+                                        <i class="fa-solid fa-file-export green_color" style="font-size:20px"></i> Xuất ra file Excel
+                                    </button>
+
+                                    <input type="hidden" id="data" name="data" />
+                                </form>
+                            </div>
+                            
+                            
+                        </div>
+
+                       
+                        <form method="get" action="/Statistic/Index">
+                            <div class="row">
+                                <div class="col-md-4" style="display: flex;">
+                                    <label for="min">Thời gian bắt đầu:</label>
+
+                                    <input style="margin-left: auto;" type="date" id="min" name="_startTime" value="@ViewBag._startTime">
+                                </div>
+                                <div class="col-md-4" style="display: flex;">
+                                    <label for="max">Thời gian kết thúc:</label>
+                                    <input style="margin-left: auto;" type="date" id="max" name="_endTime" value="@ViewBag._endTime">
+                                </div>
+                                <div class="col-md-4" style="display: flex;">
+                                    <button type ="submit" style="margin-left: auto; border-radius: 5px; width: 175px; background-color: lawngreen">
+                                        <i class="fa-solid fa-filter " style="font-size:20px"></i>Lọc
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4" style="display: flex;">
+                                    <label for="nv">Mã nhân viên:</label>
+                                    <input style="margin-left: auto;" type="text" id="nv" name="maNV" value="@ViewBag.maNV">
+                                </div>
+                                <div class="col-md-4" style="display: flex;">
+                                    <label for="xe">Mã xe:</label>
+                                    <input style="margin-left: auto;" type="text" id="xe" name="maXe" value="@ViewBag.maXe">
+                                </div>
+                                <div class="col-md-4" style="display: flex;">
+                                    <label for="hang">Tên hãng:</label>
+                                    <input style="margin-left: auto;" type="text" id="hang" name="hangXe" value="@ViewBag.hangXe">
+                                </div>
+
+
+
+                            </div>
+                        </form>
+                        <div class="table_section padding_infor_info">
+                            <div class="table-responsive-sm">
+                                <table id="myTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Thời gian</th>
+                                            <th>Mã xe</th>
+                                            <th>Tên hãng</th>
+                                            <th>Mã NV</th>
+                                            <th>Số lượng</th>
+                                            <th>Giá xe</th>
+                                            <th>Tổng tiền</th>
+
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var i in statisticTables)
+                                        {
+                                            <tr>
+                                                <td>@i.STT</td>
+                                                <td>@i.Date</td>
+                                                <td>@i.CarID</td>
+                                                <td>@i.MakeName</td>
+                                                <td>@i.StaffID</td>
+                                                <td>@i.Quantity</td>
+                                                <td>@i.Price</td>
+                                                <td>@i.Total</td>
+
+                                            </tr>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+    </div>
+</div>
+
+
+
+
+<script>
+    sTTs = @Html.Raw(Json.Serialize(sTTs));
+    dates = @Html.Raw(Json.Serialize(dates));
+    carIDs = @Html.Raw(Json.Serialize(carIDs));
+    _makeNames = @Html.Raw(Json.Serialize(_makeNames));
+    staffIDs = @Html.Raw(Json.Serialize(staffIDs));
+    quantitys = @Html.Raw(Json.Serialize(quantitys));
+    prices = @Html.Raw(Json.Serialize(prices));
+    totals = @Html.Raw(Json.Serialize(totals));
+    // Biểu đồ cho statisticMakes
+    makeNames = @Html.Raw(Json.Serialize(makeNames));
+    makeQuantities = @Html.Raw(Json.Serialize(makeQuantities));
+    makeRevenues = @Html.Raw(Json.Serialize(makeRevenues));
+
+
+    new Chart('makeChart', {
+            type: 'bar',
+            data: {
+            labels: makeNames,
+                datasets: [{
+                    label: 'Số lượng bán ra',
+                    type: 'line',
+                    data: makeQuantities,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Doanh thu (tỷ đồng)',
+                    type: 'bar',
+                    data: makeRevenues,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                legend: { display: false }
+            }
+        });
+   
+
+    // Biểu đồ cho statisticRevenues
+    monthNames = @Html.Raw(Json.Serialize(monthNames));
+    monthQuantities = @Html.Raw(Json.Serialize(monthQuantities));
+    monthRevenues = @Html.Raw(Json.Serialize(monthRevenues));
+
+
+    new Chart('revenueChart', {
+            type: 'line',
+            data: {
+            labels: monthNames,
+                datasets: [{
+                    label: 'Số lượng bán ra',
+                    type: 'line',
+                    data: monthQuantities,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: false
+                },
+                {
+                    label: 'Doanh thu (tỷ đồng)',
+                    type: 'bar',
+                    data: monthRevenues,
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1,
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+
+
+
+        // DataTables initialization
+        let table = $('#myTable').DataTable({
+            columns: [
+                { title: "STT" },
+                { title: "Thời gian" },
+                { title: "Mã xe" },
+                { title: "Tên hãng" },
+                { title: "Mã NV" },
+                { title: "Số lượng" },
+                { title: "Giá xe" },
+                { title: "Tổng tiền" }
+            ],
+        searching: false
+          
+        });
+
+    let minDate, maxDate;
+
+    // Custom filtering function which will search data in column four between two values
+    DataTable.ext.search.push(function (settings, data, dataIndex) {
+        let min = minDate.val();
+        let max = maxDate.val();
+        let date = new Date(data[1]);
+
+        if (
+            (min === null && max === null) ||
+            (min === null && date <= max) ||
+            (min <= date && max === null) ||
+            (min <= date && date <= max)
+        ) {
+            return true;
+        }
+        return false;
+    });
+
+    // Create date inputs
+    minDate = new DateTime('#min', {
+        format: 'MMMM Do YYYY'
+    });
+    maxDate = new DateTime('#max', {
+        format: 'MMMM Do YYYY'
+    });
+
+    
+
+    // Refilter the table
+    document.querySelectorAll('#min, #max').forEach((el) => {
+        el.addEventListener('change', () => table.draw());
+    });
+    
+    // Lưu trạng thái cuộn hiện tại
+    function saveScrollPosition() {
+        sessionStorage.setItem('scrollPosition', window.scrollY);
+    }
+
+    // Khôi phục trạng thái cuộn sau khi tải lại trang
+    function restoreScrollPosition() {
+        const scrollPosition = sessionStorage.getItem('scrollPosition');
+        if (scrollPosition) {
+            window.scrollTo(0, parseInt(scrollPosition));
+        }
+    }
+
+    // Gọi hàm khôi phục sau khi trang tải lại
+    window.addEventListener('load', restoreScrollPosition);
+
+    // Gọi hàm lưu trạng thái khi người dùng cuộn trang
+    window.addEventListener('scroll', saveScrollPosition);
+
+
+    // Tạo một mảng để lưu trữ dữ liệu
+    var data = [];
+
+
+    // Lấy dữ liệu từ bảng hoặc lưới đã lọc
+
+    for (var i = 0; i < sTTs.length; i++) {
+        var stt = parseInt(sTTs[i]);
+        //alert(stt);
+        //alert(dates[i]);
+        var date = dates[i];
+        //alert(date);
+        var carID = carIDs[i];
+        //alert(carID);
+        var makeName = _makeNames[i];
+        //alert(makeName);
+        var staffID = staffIDs[i];
+        //alert(staffID);
+        var quantity = parseInt(quantitys[i]);
+        var price = parseFloat(prices[i]);
+        var total = parseFloat(totals[i]);
+
+        data.push({
+            STT: stt,
+            Date: date,
+            carID: carID,
+            makeName: makeName,
+            staffID: staffID,
+            Quantity: quantity,
+            Price: price,
+            Total: total
+        })
+
+    }
+
+    // Lưu dữ liệu vào input field "#data"
+    //alert('Setting data value...');
+    $('#data').val(JSON.stringify(data));
+    //alert('Data value set!');
+</script>

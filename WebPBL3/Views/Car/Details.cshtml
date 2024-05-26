@@ -1,0 +1,169 @@
+﻿@using WebPBL3.Models
+@using Newtonsoft.Json
+@model WebPBL3.Models.CarDto
+
+
+@{
+
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+   
+}
+
+
+<div class="container">
+<div class="row">
+        <div class="col-md-6" style="padding-top: 10px;font-family:Microsoft Sans Serif" >
+            <h4 style="font-size:30px;font-weight: bold;" >@Model.CarName</h4>
+            <h6 style="font-size:25px;font-weight: bold;">@Model.Price</h6>
+            <hr sstyle="height: 2px;" />
+            <p style="font-size:15px">Tên xe: @Model.CarName</p>
+            <p style="font-size:15px">Thương hiệu: @Model.MakeName</p>
+            <p style="font-size:15px">Giá xe: @Model.Price (VND)</p>
+            <p style="font-size:15px">Động cơ: @Model.Engine</p>
+            <p style="font-size:15px">Số chỗ ngồi: @Model.Seat</p>
+            <p style="font-size:15px">Kích thước: @Model.Dimension (mm)</p>
+            <p style="font-size:15px">Nguồn gốc: @Model.Origin</p>
+            <p style="font-size:15px">Tốc độ tối đa: @Model.Topspeed (Km/h)</p>
+            <p style="font-size:15px">Dung tích: @Model.Capacity (L)</p>
+            <p style="font-size:15px">Nhiên liệu tiêu thụ: @Model.FuelConsumption (L/100Km)</p>
+            <p style="font-size:15px">Màu sắc: @Model.Color</p>
+            <p style="font-size:15px">Năm sản xuất: @Model.Year</p>
+            <p style="font-size:15px">Số lượng: @Model.Quantity</p>
+            <p style="font-size:15px">Mô tả: @Model.Description</p>
+            <div class="col-md-2"> 
+                <a asp-controller="Car" asp-action="CarListTable" class="btn btn-success">
+                    Quay lại danh sách
+                </a>
+            </div>
+            
+       </div>
+        <div class="col-md-6">
+            <img src="~/upload/car/@Model.Photo" style="display:block; margin: auto; height: 500px; width: auto; padding-top:150px" />
+        </div>
+    </<div>
+</div>
+
+@* <div class="row">
+    <div class="col-md-12">
+        <form>
+            
+            <input type="hidden" name="CarID"  />
+
+            <div class="form row">
+                <div class="form-group col-md-3">
+                    
+                    <label class="control-label">Tên ô tô</label>
+                    <div class="form-control">
+                        @Model.CarName
+                    </div>
+                    
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Photo" class="control-label">Hình ảnh</label>
+                    <div class="form-control">
+                        @Model.Photo
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="MakeID" class="control-label">Thương hiệu</label>
+                    <div class="form-control">
+                        @Model.MakeName
+                    </div>
+                    
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Price" class="control-label">Giá xe (VND)</label>
+                    <div class="form-control">
+                        @Model.Price
+                    </div>
+                </div>
+            </div>
+
+            <div class="form row">
+                <div class="form-group col-md-3">
+                    <label asp-for="Engine" class="control-label">Động cơ</label>
+                    <div class="form-control">
+                        @Model.Engine
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Seat" class="control-label">Số chỗ ngồi</label>
+                    <div class="form-control">
+                        @Model.Seat
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Dimension" class="control-label">Kích thước (A x B x C)</label>
+                    <div class="form-control">
+                        @Model.Dimension
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Origin" class="control-label">Nguồn gốc</label>
+                    <div class="form-control">
+                        @Model.Origin
+                    </div>
+                </div>
+            </div>
+
+            <div class=" form row">
+                <div class="form-group col-md-3">
+                    <label asp-for="Topspeed" class="control-label">Tốc độ tối đa (Km/h)</label>
+                    <div class="form-control">
+                        @Model.Topspeed
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Capacity" class="control-label">Dung tích (L)</label>
+                    <div class="form-control">
+                        @Model.Capacity
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="FuelConsumption" class="control-label">Tiêu thụ nhiên liệu (L/100Km)</label>
+                    <div class="form-control">
+                        @Model.FuelConsumption
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Color" class="control-label">Màu sắc</label>
+                    <div class="form-control">
+                        @Model.Color
+                    </div>
+                </div>
+            </div>
+
+            <div class="form row">
+                <div class="form-group col-md-3">
+                    <label asp-for="Year" class="control-label">Năm sản xuất</label>
+                    <div class="form-control">
+                        @Model.Year
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="Quantity" class="control-label">Số lượng</label>
+                    <div class="form-control">
+                        @Model.Quantity
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label asp-for="Description" class="control-label">Mô tả</label>
+                    <div class="form-control">
+                        @Model.Description
+                    </div>
+                </div>
+            </div>
+            <div class="form row" style="display: flex; justify-content: flex-end;">
+                <div class="form-group col-md-2">
+                    <a asp-controller="Car" asp-action="CarListTable" class="btn btn-outline-primary border form-control">
+                        Quay lại danh sách
+                    </a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div> *@
+
+

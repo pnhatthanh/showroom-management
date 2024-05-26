@@ -1,0 +1,275 @@
+﻿@model WebPBL3.Models.AddStaffDTO
+
+
+@{
+    ViewData["Title"] = "UpdateStaff";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@* <div class="form-group form-check">
+    <label class="form-check-label">
+        <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+    </label>
+</div> *@
+<hr />
+<div class="container-xl px-4 mt-4">
+    <form method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="StaffID" />
+        <div class="row">
+            <div class="col-xl-4">
+                <div class="card mb-4 mb-xl-0">
+                    <div class="card-body text-center">
+                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="/upload/staff/@ViewData["Photo"]" alt="" style=" width: 230px;height:230px;">
+                        <div class="form-group">
+                            <input id="photoInput" asp-for="Photo" type="file" class="form-control" style="display: none;">
+                            <span asp-validation-for="Photo" class="text-danger"></span>
+                        </div>
+                        <button id="choosePhotoButton" type="button" class="btn btn-primary" style="position: relative; top: -10px; background-color: gray; color: white;">
+                            <i class="fa-solid fa-pen-to-square"></i> Cập nhật ảnh
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-8">
+                <!-- Account details card-->
+                <div class="card mb-4">
+                    <div class="card-header">Thông tin chi tiết</div>
+                    <div class="card-body">
+
+                        @if (TempData["Error"] != null)
+                        {
+                            <div class="text-danger">
+                                <span><b>Xin lỗi!</b> - @TempData["Error"] </span>
+                            </div>
+                        }
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (first name)-->
+                            <div class="col-md-6">
+                                <label asp-for="FullName" class="control-label">Họ và Tên</label>
+                                <input asp-for="FullName" class="form-control" />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (last name)-->
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="control-label">Email</label>
+                                <input asp-for="Email" class="form-control" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+
+                            </div>
+                        </div>
+                        <!-- Form Row        -->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (organization name)-->
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="control-label">Số điện thoại</label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (location)-->
+                            <div class="col-md-6">
+                                <label asp-for="IdentityCard" class="control-label">CCCD</label>
+                                <input asp-for="IdentityCard" class="form-control" />
+                                <span asp-validation-for="IdentityCard" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- Form Row        -->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (organization name)-->
+                            <div class="col-md-6">
+                                <label asp-for="Gender" class="control-label">Giới tính</label>
+                                <select asp-for="Gender" class="form-control">
+                                    <option value="">--Chọn giới tính--</option>
+                                    <option value="True">Nam</option>
+                                    <option value="False">Nữ</option>
+                                </select>
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (location)-->
+                            <div class="col-md-6">
+                                <label asp-for="BirthDate" class="control-label">Ngày sinh</label>
+                                <input asp-for="BirthDate" class="form-control" type="date" />
+                                <span asp-validation-for="BirthDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (phone number)-->
+                            <div class="col-md-6">
+                                <label asp-for="ProvinceName" class="control-label">Tên tỉnh(Thành phố)</label>
+                                <select id="city" asp-for="ProvinceName" class="form-control">
+                                    <option value="">--Chọn tên tỉnh(Thành phố)--</option>
+                                </select>
+                                <span asp-validation-for="ProvinceName" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (birthday)-->
+                            <div class="col-md-6">
+                                <label asp-for="DistrictName" class="control-label">Tên quận(huyện)</label>
+
+                                <select id="district" asp-for="DistrictName" class="form-control">
+                                    <option value="">--Chọn tên quận(huyện)--</option>
+                                </select>
+                                <span asp-validation-for="DistrictName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (phone number)-->
+                            <div class="col-md-6">
+                                <label asp-for="WardName" class="control-label">Tên xã(phường)</label>
+
+                                <select id="ward" asp-for="WardName" class="form-control">
+                                    <option value="" selected>WardName</option>
+                                </select>
+                                <span asp-validation-for="WardName" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (birthday)-->
+                            <div class="col-md-6">
+                                <label asp-for="Address" class="control-label">Số nhà, đường</label>
+                                <input asp-for="Address" class="form-control" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Position" class="control-label">Chức vụ</label>
+                                <input asp-for="Position" class="form-control" />
+                                <span asp-validation-for="Position" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Salary" class="control-label">Lương</label>
+                                <input asp-for="Salary" class="form-control" />
+                                <span asp-validation-for="Salary" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="form row" style="display: flex; justify-content: flex-end;">
+                            <div class="form-group col-md-3">
+                                <button type="submit" class="btn btn-primary form-control">Cập nhật</button>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <a asp-controller="Staff" asp-action="listStaffs" class="btn btn-outline-primary border form-control">
+                                    Quay lại
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    document.getElementById('choosePhotoButton').addEventListener('click', function () {
+        document.getElementById('photoInput').click();
+    });
+    document.getElementById('photoInput').addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                document.getElementById('profileimage').src = e.target.result;
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    document.getElementById('city').addEventListener('change', function () {
+        var selectedProvinceId = this.value; // Lấy ID của tỉnh đã chọn
+        if (selectedProvinceId) {
+            $('#district').empty();
+            resetWards();
+            getDistricts(selectedProvinceId);
+            var selectedProvinceName = $("#city option:selected").text();
+            document.getElementById('ProvinceName').value = selectedProvinceName;
+        } else {
+            $('#district').empty(); // Nếu không có tỉnh được chọn, xóa danh sách huyện
+            resetWards();// Xóa danh sách xã
+            document.getElementById('ProvinceName').value = '';
+        }
+    });
+    document.getElementById('ward').addEventListener('change', function () {
+        var selectedWardName = $("#ward option:selected").text();
+        document.getElementById('WardName').value = selectedWardName;
+    });
+    function resetWards() {
+        $('#ward').empty();
+        $('#ward').html('<option value="">--Chọn tên xã(phường)--</option>');
+    }
+    function getDistricts(provinceId) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '@Url.Action("GetDistrict", "Staff")?id=' + provinceId, true); // Tạo đường dẫn sử dụng @Url.Action()
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                var data = JSON.parse(xhr.responseText);
+                $('#district').empty(); // Xóa danh sách huyện hiện tại
+                $('#district').html('<option value="">--Chọn tên quận(huyện)--</option>');
+                data.forEach(item => {
+                    $('#district').append('<option value=' + item.id + '>' + item.name + '</option>'); // Thêm từng huyện vào danh sách
+                });
+            } else {
+                console.error('Request failed. Returned status of', xhr.status);
+            }
+        };
+        xhr.onerror = function () {
+            console.error('Request failed');
+        };
+        xhr.send();
+    }
+
+    document.getElementById('district').addEventListener('change', function () {
+        var selectedDistrictId = this.value; // Lấy ID của huyện đã chọn
+        if (selectedDistrictId) {
+            getWards(selectedDistrictId); // Gọi hàm để lấy danh sách xã dựa trên huyện đã chọn
+            var selectedDistrictName = $("#district option:selected").text();
+            document.getElementById('DistrictName').value = selectedDistrictName;
+        } else {
+            $('#ward').empty(); // Nếu không có huyện được chọn, xóa danh sách xã
+            document.getElementById('DistrictName').value = '';
+        }
+    });
+
+    function getWards(districtId) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '@Url.Action("GetWard", "Staff")?id=' + districtId, true); // Tạo đường dẫn sử dụng @Url.Action()
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                var data = JSON.parse(xhr.responseText);
+                $('#ward').empty(); // Xóa danh sách xã hiện tại
+                $('#ward').html('<option value="">--Chọn tên xã(phường)--</option>');
+                data.forEach(item => {
+                    $('#ward').append('<option value=' + item.id + '>' + item.name + '</option>'); // Thêm từng xã vào danh sách
+                });
+            } else {
+                console.error('Request failed. Returned status of', xhr.status);
+            }
+        };
+        xhr.onerror = function () {
+            console.error('Request failed');
+        };
+        xhr.send();
+    }
+    $(document).ready(function () {
+        GetProvinces();
+    });
+
+    function GetProvinces() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '@Url.Action("GetProvince", "Staff")', true);
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                var data = JSON.parse(xhr.responseText);
+                $('#city').html('');
+                $('#city').html('<option value="">--Chọn tên tỉnh(Thành phố)--</option>');
+                data.forEach(item => {
+                    $('#city').append('<option value=' + item.provinceID + '>' + item.provinceName + '</option>');
+                });
+            } else {
+                console.error('Request failed. Returned status of', xhr.status);
+            }
+        };
+        xhr.onerror = function () {
+            console.error('Request failed');
+        };
+        xhr.send();
+    }
+</script>

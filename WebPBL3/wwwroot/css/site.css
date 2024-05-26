@@ -1,0 +1,452 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+.bg-breadcrumb {
+    background: linear-gradient(rgba(19, 53, 123, 0.5), rgba(19, 53, 123, 0.5)), url('https://watermark.lovepik.com/photo/20211122/large/lovepik-car-sales-staff-introduce-cars-picture_500676932.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 80vh;
+}
+
+.bg-breadcrumb {
+    background: linear-gradient(rgba(19, 53, 123, 0.5), rgba(19, 53, 123, 0.5)), url('https://watermark.lovepik.com/photo/20211122/large/lovepik-car-sales-staff-introduce-cars-picture_500676932.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    height: 80vh;
+}
+
+.feature .icon {
+    display: inline-block;
+    position: relative;
+}
+
+    .feature .icon:before {
+        content: "";
+        width: 33px;
+        height: 33px;
+        position: absolute;
+        background: rgba(59, 93, 80, 0.2);
+        border-radius: 50%;
+        right: -8px;
+        bottom: 0;
+    }
+
+.icon img {
+    width: 40px;
+}
+.rounde span {
+    display: block;
+}
+
+
+.product-rating {
+    display: inline-block;
+}
+
+    .product-rating i {
+        color: rgb(207, 207, 6);
+    }
+#intro {
+    background-image: url("/images/acount.jpg");
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.new-border {
+    border: 3px solid black; /* Màu và độ dày của khung viền */
+    border-radius: 10px; /* Độ cong của góc */
+    padding: 20px; /* Khoảng cách nội dung và khung viền */
+    display: inline-block; /* Đảm bảo khối không căng ra toàn bộ chiều rộng */
+}
+
+.car-details {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các phần tử chuyển hàng khi không còn đủ không gian */
+}
+
+.left {
+    flex: 1; /* Phần trái chiếm một phần tỷ lệ linh hoạt của không gian còn lại */
+}
+
+.right {
+    flex: 1; /* Phần phải chiếm một phần tỷ lệ linh hoạt của không gian còn lại */
+    display: flex;
+    justify-content: center; /* Căn giữa nội dung ngang của phần phải */
+    align-items: center; /* Căn giữa nội dung dọc của phần phải */
+    margin-left: 50px;
+}
+
+.text h2 {
+    font-size: 24px;
+}
+
+.text h3 {
+    font-size: 16px;
+}
+
+.text h5 {
+    font-size: 14px;
+    color: black;
+}
+
+.text h2 + h5 {
+    border-bottom: 1px solid black;
+    margin-bottom: 10px; /* Tăng khoảng cách giữa các phần tử */
+}
+
+/* Đường line2 giữa h5 và h2 */
+.text h5 + h2 {
+    border-bottom: 1px solid black;
+    margin-top: 10px; /* Tăng khoảng cách giữa các phần tử */
+}
+
+.car-table-container {
+    scrollbar-width: thin;
+    max-height: 500px; /* Đặt chiều cao tối đa của vùng chứa bảng */
+    overflow-y: auto; /* Thêm thanh cuộn khi bảng vượt quá chiều cao */
+    border: 1px solid black; /* Đường viền cho vùng chứa */
+    /*position: relative;*/
+}
+
+.car-table-header {
+    overflow: hidden; /* Loại bỏ thanh cuộn ngang */
+}
+
+.car-table-body {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.car-table {
+    width: 100%; /* Bảng rộng bằng phần tử chứa */
+    border-collapse: collapse; /* Gộp đường viền */
+}
+
+    .car-table th, .car-table td {
+        padding: 8px; /* Khoảng cách giữa nội dung và đường viền */
+        text-align: left; /* Căn lề văn bản */
+        border: 1px solid black; /* Đường viền xung quanh ô */
+        word-wrap: break-word;
+    }
+
+    .car-table th {
+        background-color: #9F2125; /* Màu nền của tiêu đề cột */
+        color: white; /* Màu văn bản của tiêu đề cột */
+    }
+
+.car-image {
+    max-width: 100%; /* Ảnh tự động co giãn theo kích thước của phần tử cha */
+    height: auto; /* Đảm bảo tỷ lệ khung hình tự động */
+    margin: 30px auto 50px auto;
+}
+
+.car-table thead th {
+    position: sticky;
+    top: 0; /* Giữ phần tử thể hiện ở đỉnh khi cuộn */
+    z-index: 2; /* Đảm bảo phần tử thể hiện nằm trên cùng */
+    background-color: #9F2125; /* Màu nền của tiêu đề cột */
+    color: white; /* Màu văn bản của tiêu đề cột */
+}
+
+
+.car__filter__option {
+    background: #e9ecef70;
+    padding: 15px 50px;
+    margin-bottom: 30px;
+}
+
+    .car__filter__option .car__filter__option__item.car__filter__option__item--right {
+        text-align: right;
+    }
+
+    .car__filter__option .car__filter__option__item h6 {
+        font-size: 15px;
+        color: #353535;
+        font-weight: 700;
+        display: inline-block;
+        margin-right: 15px;
+    }
+
+    .car__filter__option .car__filter__option__item .nice-select {
+        width: auto;
+        font-size: 15px;
+        color: #353535;
+        padding-left: 20px;
+        padding-right: 50px;
+        border: 1px solid #ebebeb;
+        height: 36px;
+        background: #ffffff;
+        line-height: 36px;
+        border-radius: 0;
+        float: none;
+        display: inline-block;
+    }
+
+        .car__filter__option .car__filter__option__item .nice-select .list {
+            width: 100%;
+            margin-top: 0;
+            border-radius: 0;
+        }
+
+
+        .car__filter__option .car__filter__option__item .nice-select:after {
+            border-bottom: 1.5px solid #AAAAB3;
+            border-right: 1.5px solid #AAAAB3;
+            height: 7px;
+            right: 22px;
+            width: 7px;
+        }
+.car__filter__option .car__filter__option__item.car__filter__option__item--right {
+     text-align: left;
+     padding-top: 20px;
+}
+.car__sidebar {
+    background: #e9ecef70;
+    padding: 30px;
+}
+.car__sidebar {
+    margin-bottom: 40px;
+}
+.car__sidebar {
+    margin-bottom: 40px;
+}
+.car__search {
+    width: 100%;
+    display:flex;
+}
+.btn-search {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Hoặc thay đổi thành flex-start hoặc flex-end để căn trái hoặc phải */
+    padding: 0.375rem 0.75rem; /* Điều chỉnh padding để nút không quá lớn */
+    border: none;
+    background: none;
+}
+    .car__search h5 {
+        font-size: 20px;
+        color: #353535;
+        font-weight: 700;
+        margin-bottom: 15px;
+        margin-right: 10px;
+    }
+    .car__search form {
+        justify-content: center; /* căn giữa theo chiều ngang */
+        align-items: center;
+        display: flex;
+        width: 100%;
+        position: relative;
+    }
+    /*.car__search:hover #searchTerm{
+        padding: 10px 0px 10px 15px;
+    }*/
+
+    .car__search form input {
+        flex: 1;
+        height: 45px;
+        width: 100%;
+        font-size: 15px;
+        color: #727171;
+        padding-left: 20px;
+        border: 1px solid #ebebeb;
+        background: #ffffff;
+    }
+
+            .car__search form input::-webkit-input-placeholder {
+                color: #727171;
+            }
+
+            .car__search form input::-moz-placeholder {
+                color: #727171;
+            }
+
+            .car__search form input:-ms-input-placeholder {
+                color: #727171;
+            }
+
+            .car__search form input::-ms-input-placeholder {
+                color: #727171;
+            }
+
+            .car__search form input::placeholder {
+                color: #727171;
+            }
+
+        .car__search form button {
+            font-size: 14px;
+            color: #AAAAB3;
+            position: absolute;
+            right: 0;
+            top: 0;
+            background: transparent;
+            border: none;
+            height: 100%;
+            padding: 15px;
+        }
+.car__filter h5 {
+    font-size: 20px;
+    color: #353535;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.car__filter form .nice-select {
+    width: 100%;
+    font-size: 15px;
+    color: #727171;
+    padding-left: 20px;
+    border: 1px solid #ebebeb;
+    height: 46px;
+    background: #ffffff;
+    line-height: 46px;
+    border-radius: 0;
+    margin-bottom: 10px;
+    float: none;
+}
+
+    .car__filter form .nice-select .list {
+        width: 100%;
+        margin-top: 0;
+        border-radius: 0;
+    }
+
+    .car__filter form .nice-select:after {
+        border-bottom: 1.5px solid #AAAAB3;
+        border-right: 1.5px solid #AAAAB3;
+        height: 7px;
+        right: 22px;
+        width: 7px;
+    }
+
+.car__filter form .filter-price {
+    margin-bottom: 30px;
+    padding-top: 8px;
+}
+
+    .car__filter form .filter-price p {
+        color: #323232;
+        margin-bottom: 5px;
+        margin-bottom: 18px;
+    }
+
+    .car__filter form .filter-price .price-range-wrap {
+        position: relative;
+    }
+
+        .car__filter form .filter-price .price-range-wrap .ui-widget-content {
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 1px;
+        }
+
+        .car__filter form .filter-price .price-range-wrap .ui-slider-horizontal .ui-slider-handle {
+            top: -5px;
+            margin-left: -4px;
+        }
+
+        .car__filter form .filter-price .price-range-wrap .ui-slider .ui-slider-handle {
+            width: 14px;
+            height: 14px;
+            background: #db2d2e;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .car__filter form .filter-price .price-range-wrap .ui-state-default,
+        .car__filter form .filter-price .price-range-wrap .ui-widget-content .ui-state-default,
+        .car__filter form .filter-price .price-range-wrap .ui-widget-header .ui-state-default,
+        .car__filter form .filter-price .price-range-wrap .ui-button,
+        .car__filter form .filter-price .price-range-wrap html .ui-button.ui-state-disabled:hover,
+        .car__filter form .filter-price .price-range-wrap html .ui-button.ui-state-disabled:active {
+            border: none;
+        }
+
+        .car__filter form .filter-price .price-range-wrap .ui-slider .ui-slider-range {
+            background: #db2d2e;
+        }
+
+    .car__filter form .filter-price .price-input {
+        position: absolute;
+        left: 42px;
+        top: -44px;
+    }
+
+        .car__filter form .filter-price .price-input input {
+            font-size: 15px;
+            color: #353535;
+            font-weight: 700;
+            border: none;
+            width: 200px;
+            background: transparent;
+        }
+
+.car__filter form .car__filter__btn {
+    text-align: center;
+}
+.car__item {
+    margin-bottom: 30px;
+}
+.btn.btn-primary.detail-button {
+    transition: transform 0.3s ease;
+}
+
+    .btn.btn-primary.detail-button:hover {
+        transform: scale(1.1);
+    }
+.pagination__option a {
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    font-size: 18px;
+    color: #727171;
+    font-weight: 700;
+    border: 1px solid #ebebeb;
+    border-radius: 2px;
+    line-height: 50px;
+    text-align: center;
+    margin-right: 6px;
+    -webkit-transition: all, 0.3s;
+    -o-transition: all, 0.3s;
+    transition: all, 0.3s;
+}
+
+    .pagination__option a:hover,
+    .pagination__option a.active {
+        border-color: #db2d2e;
+        color: #353535;
+    }
+
+    .pagination__option a:last-child {
+        margin-right: 0;
+    }
+
+    .pagination__option a span {
+        font-size: 18px;
+        position: relative;
+        top: 2px;
+        font-weight: 700;
+    }

@@ -1,0 +1,78 @@
+﻿@model WebPBL3.DTO.NewsDto
+
+@{
+    ViewData["Title"] = "DetailUser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<News> _news = ViewBag._news;
+}
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar  ftco-navbar-light" id="ftco-navbar" style="background-color:black;">
+        <div class="container">
+            <a class="navbar-brand" href="index.html" style="color: black;">Dragon<span style="color:#8B0000" ;>Car</span></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fa-solid fa-bars"></i>Menu
+            </button>
+            <div class="collapse navbar-collapse" id="ftco-nav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active"><a href="@Url.Action("Index", "Home")" class="nav-link" style="color:black;" onmouseover="this.style.color='#8B0000'" onmouseout="this.style.color='black'">Trang Chủ</a></li>
+                    <li class="nav-item "><a href="@Url.Action("About", "Home")" class="nav-link" style="color:black;" onmouseover="this.style.color='#8B0000'" onmouseout="this.style.color='black'">Giới Thiệu</a></li>
+                    <li class="nav-item"><a href="@Url.Action("Index", "Car")" class="nav-link" style="color:black;" onmouseover="this.style.color='#8B0000'" onmouseout="this.style.color=black'">Hãng Xe</a></li>
+                    <li class="nav-item"><a href="@Url.Action("Index", "News")" class="nav-link" style="color:black;" onmouseover="this.style.color='#8B0000'" onmouseout="this.style.color='black'">Tin Tức</a></li>
+                    <li class="nav-item"><a href="@Url.Action("Index", "Feedback")" class="nav-link" style="color:black;" onmouseover="this.style.color='#8B0000'" onmouseout="this.style.color='black'">Liên Hệ</a></li>
+                    <li class="nav-item"><a href="@Url.Action("Login", "Account")" class="nav-link" style="color:black;" onmouseover="this.style.color='#8B0000'" onmouseout="this.style.color='black'">Đăng Nhập</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+    </nav>
+</header>
+
+<div class="section2" style="margin-left:355px;">
+    <div class="duoi" style="margin-left: auto; margin-right: auto;">
+        <div class="trai" style="margin-top: 150px;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="read">
+                            <h3 style="margin-left: -77px;font-size: 32px;">
+                                @Model.Title
+                            </h3>
+                            <div class="photo">
+                                <img src="~/images/@Model.Photo" style="height: 550px; margin-left: -115px; width: 920px;" />
+                            </div>
+                            <p style="margin-left: -80px;font-size: 23px; text-align: justify;">
+                               @Model.Content
+                           </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="phai" style="margin-top: 150px; margin-left: 50px;">
+            <h2>Tin nổi bật</h2>
+            <div class="container">
+                <div class="row">
+                    @foreach (var news in _news.Take(4))
+                    {
+                        string[] words1 = news.Title.Split(' ');
+                        string Titles = string.Join(" ", words1.Take(8)) + ". . .";
+                        <a asp-controller="News" asp-action="DetailUser" asp-route-id="@news.NewsID">
+                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="box">
+                                    <div class="anh1">
+                                        <img src="~/images/@news.Photo" />
+                                    </div>
+                                    <div class="text1">
+                                        <h3>@Titles</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

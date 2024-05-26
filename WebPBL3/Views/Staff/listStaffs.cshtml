@@ -1,0 +1,270 @@
+﻿@model IEnumerable<WebPBL3.DTO.Staff.GetStaffDTO>
+@{
+    ViewData["Title"] = "Quản lý nhân viên";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int page = ViewBag.currentPage;
+    int total = ViewBag.totalPage;
+}
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Danh sách nhân viên</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        <div class="row pb-3">
+            <div class="col-6">
+                <form id="searchForm" action="@Url.Action("Search", "Staff")" method="get">
+                    <div class="form-row">
+                        <div class="col-8">
+                            <div class="input-group rounded">
+                                <input type="text" class="form-control rounded" id="searchTerm" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Search" aria-label="Search" aria-describedby="search-addon">
+                                <span id="searchIcon" class="input-group-text border-0" id="search-addon" style="cursor: pointer;">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <select class="form-control rounded" id="searchField" name="searchField">
+                                @{
+                                    var options = new Dictionary<string, string>
+                                {
+                                { "FullName", "Tên NV" },
+                                { "IdentityCard", "CCCD" },
+                                { "PhoneNumber", "SĐT" },
+                                { "Address", "Địa chỉ" }
+                                };
+                                    string selectedField = ViewBag.SearchField as string;
+                                }
+
+                                @foreach (var option in options)
+                                {
+                                    if (option.Key == selectedField)
+                                    {
+                                        <option value="@option.Key" selected="selected">@option.Value</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@option.Key">@option.Value</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <input type="hidden" id="page" name="page" value="@ViewBag.currentPage" />
+                </form>
+            </div>
+            
+            <div class="col-6 text-end" style="text-align: right;">
+                <a asp-controller="Staff" asp-action="AddStaff" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i>  Thêm nhân viên
+                </a>
+            </div>
+        </div>
+
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        STT
+                    </th>
+                    <th>
+                        Mã nhân viên 
+                    </th>
+                    <th>
+                        Tên nhân viên
+                    </th>
+                    <th>
+                        Giới tính
+                    </th>
+                    <th>
+                        SĐT
+                    </th>
+                    <th>
+                        Địa chỉ
+                    </th>
+                    <th>
+                        Trạng thái
+                    </th>
+                    <th>
+
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @{ var stt = 1; }
+                @foreach (var obj in Model.OrderBy(u => u.StaffID))
+                {
+                    var stCheck = obj.Status ? "<i class='fa-solid fa-check' style='color: green;font-size: 18px;'></i>" : "<i class='fa-solid fa-xmark' style='color: red;font-size: 18px;'></i>";
+                    <tr>
+                        <td>@stt</td>
+                        <td>@obj.StaffID</td>
+                        <td>
+                            @obj.FullName
+                        </td>
+                        <td>
+                            @if (@obj.Gender.HasValue)
+                            {
+                                @if (@obj.Gender.Value)
+                                {
+                                    @:Nam
+                                }
+                                else
+                                {
+                                    @:Nữ
+                                }
+                            }
+                        </td>
+
+                        <td>
+                            @obj.PhoneNumber
+                        </td>
+                        <td>
+                            @obj.Address
+                        </td>
+                        <td>
+                            <a href="#" data-id="@obj.StaffID" class="btnStatus">@Html.Raw(stCheck)</a>
+                        </td>
+
+                        <td style ="width: 30px;">
+                            <div class="btn-group" role="group" style="gap: 10px">
+                                <a asp-controller="Staff" asp-action="Details" asp-route-id="@obj.StaffID" class="btn btn-outline-success" style="border-radius: 5px;">
+                                    <i class="fa-solid fa-eye" style="border-radius: 5px;"></i>
+                                </a>
+
+                                <!-- Sử dụng icon pen cho Cập nhật -->
+                                <a asp-controller="Staff" asp-action="UpdateStaff" asp-route-id="@obj.StaffID" class="btn btn-warning" style="border-radius: 5px;">
+                                    <i class="fa-solid fa-pen-to-square" style="border-radius: 5px;"></i>
+                                </a>
+
+                                <!-- Sử dụng icon trash cho Xóa -->
+
+                                <a href="#myModal-@obj.StaffID" class="btn btn-danger" data-toggle="modal" style="border-radius: 5px;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+
+                                <div id="myModal-@obj.StaffID" class="modal fade">
+                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div class="icon-box" style="margin-right: 10px;">
+                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;"></i>
+                                                </div>
+                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể undo.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a asp-controller="Staff" asp-action="DeleteStaff" asp-route-id="@obj.StaffID" class="btn btn-danger">
+                                                    Xác nhận
+                                                </a>
+                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                    stt++;
+                }
+            </tbody>
+        </table>
+
+    </div>
+    @if (total > 0)
+    {
+        <ul style="display: flex; justify-content: center; align-items: center; padding: 0; margin-top: 10px; list-style: none;margin-bottom: 20px;">
+            <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;">
+                <a asp-action="Search" asp-route-page="@(page - 1)" asp-route-searchTerm="@ViewBag.SearchTerm" asp-route-searchField="@ViewBag.SearchField" class="prev" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                    &laquo
+                </a>
+            </li>
+            @for (int i = 1; i <= total; i++)
+            {
+                if (i == page)
+                {
+                    <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;background-color: #37B247;">
+                        <a asp-action="Search" asp-route-searchTerm="@ViewBag.SearchTerm" asp-route-searchField="@ViewBag.SearchField" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                            @i
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;">
+                        <a asp-action="Search" asp-route-page="@i" asp-route-searchTerm="@ViewBag.SearchTerm" asp-route-searchField="@ViewBag.SearchField" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                            @i
+                        </a>
+                    </li>
+                }
+            }
+            <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;">
+                <a asp-action="Search" asp-route-page="@(page + 1)" asp-route-searchTerm="@ViewBag.SearchTerm" asp-route-searchField="@ViewBag.SearchField" class="next" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                    &raquo;
+                </a>
+            </li>
+        </ul>
+    }
+
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+@section scripts
+{
+    <script>
+        document.getElementById("searchTerm").addEventListener("keydown", function (event) {
+            if (event.keyCode === 13) {
+                document.getElementById("page").value = 1;
+                document.getElementById("searchForm").submit();
+            }
+        });
+        document.getElementById("searchIcon").addEventListener("click", function () {
+            document.getElementById("page").value = 1;
+            document.getElementById("searchForm").submit();
+        });
+        document.querySelectorAll('.btnStatus').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var id = this.getAttribute('data-id');
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/Staff/IsActive', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            var rs = JSON.parse(xhr.responseText);
+                            if (rs.success) {
+                                if (rs.isActive) {
+                                    btn.innerHTML = "<i class='fa-solid fa-check' style='color: green;font-size: 16px;'></i>";
+                                } else {
+                                    btn.innerHTML = "<i class='fa-solid fa-xmark' style='color: red;font-size: 16px;'></i>";
+                                }
+                            } else {
+                                alert('Có lỗi xảy ra khi cập nhật trạng thái.');
+                            }
+                        } else {
+                            alert('Có lỗi xảy ra khi gửi yêu cầu.');
+                        }
+                    }
+                };
+                xhr.send('id=' + encodeURIComponent(id));
+            });
+        });
+    </script>
+
+
+}
+
+
+
