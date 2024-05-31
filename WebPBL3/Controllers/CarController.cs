@@ -9,14 +9,15 @@ using System;
 using System.Drawing;
 using System.Runtime.ConstrainedExecution;
 using WebPBL3.Models;
-
-
+using WebPBL3.DTO;
+using Microsoft.AspNetCore.Authorization;
 namespace WebPBL3.Controllers
 {
     public class CarController : Controller
     {
         private ApplicationDbContext _db;
         private IWebHostEnvironment _environment;
+        // Số lượng item mỗi trang
         private int limits = 10;
         public CarController(ApplicationDbContext db, IWebHostEnvironment environment)
         {
@@ -45,7 +46,7 @@ namespace WebPBL3.Controllers
             return View();
         }
 
-        public ActionResult Cars(string txtSearch = "",string makeName = "", string origin = "", string color = "", string seat = "",int page = 1, int perPage = 9)
+        public ActionResult Cars(string txtSearch = "",string makeName = "", string origin = "", string color = "", string seat = "",int page = 1, int perPage = 9, string sortBy = "")
         {
 			var item = _db.Cars
 		    .Include(c => c.Make)
@@ -53,7 +54,7 @@ namespace WebPBL3.Controllers
 		    .ToList();
             if (!string.IsNullOrEmpty(txtSearch))
             {
-                item = item.Where(car => car.CarName.Contains(txtSearch)).ToList();
+                item = item.Where(car => car.CarName.ToLower().Contains(txtSearch.ToLower())).ToList();
             }
             if (!string.IsNullOrEmpty(makeName))
             {
@@ -71,6 +72,34 @@ namespace WebPBL3.Controllers
 			{
 				item = item.Where(c => c.Seat == seatNumber).ToList();
 			}
+            switch(sortBy)
+            {
+                case "Price":
+                    item = item.OrderBy(p => p.Price).ToList();
+                    break;
+                case "bestSelling":
+                    var orders = _db.Orders
+                        .Include(o => o.DetailOrders)
+                        .ThenInclude(deo => deo.Car)
+                        .Where(o => o.Status == "Đã thanh toán")
+                        .ToList();
+                    Dictionary<string, int> quantity = new Dictionary<string, int>();
+                    foreach (var order in orders)
+                    {
+                        foreach (var detailOrder in order.DetailOrders)
+                        {
+                            if (!quantity.ContainsKey(detailOrder.Car.CarID))
+                            {
+                                quantity[detailOrder.Car.CarID] = 0;
+                            }
+                            quantity[detailOrder.Car.CarID] += detailOrder.Quantity;
+                        }
+                    }
+                    var sortedDict = quantity.OrderBy(q => q.Value).Take(4).ToList();
+                    var bestSellingCarIds = sortedDict.Select(x => x.Key);
+                    item = item.Where(c => bestSellingCarIds.Contains(c.CarID)).ToList();
+                    break;
+            }
             int totalCount = item.Count();
             var cars = item.Skip((page-1) * perPage)
                 .Take(perPage)
@@ -126,22 +155,29 @@ namespace WebPBL3.Controllers
 
 			};
             var relatedCars = _db.Cars
-                        .Where(car => car.MakeID == c.MakeID && car.CarID != c.CarID)
+                        .Where(car => car.MakeID == c.MakeID && car.CarID != c.CarID && !car.Flag)
                         .ToList();
             ViewBag.RelatedCars = relatedCars;
             return View(carDtoFromDb);
         }
+
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> CarListTable(int makeid = 0,string searchtxt = "", int page = 1)
         {
-           
-           
+
+            // Kiểm tra và lấy dữ liệu "makes" nếu chưa có trong TempData
+            // TemData lưu trữ dữ liệu trong Session, khi Session hết hạn hoặc bị xóa thì makes bay
             if (!TempData.ContainsKey("makes"))
             {
                 List<Make> makes = _db.Makes.ToList();
                 TempData["makes"] = JsonConvert.SerializeObject(makes);
                 TempData.Keep("makes");
             }
-            List<CarDto> cars = await _db.Cars.Include(c => c.Make).OrderBy(c => c.CarID).Where(c => c.Flag == false && (makeid==0||c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt))).Select(c => new CarDto
+            List<CarDto> cars = await _db.Cars
+                .Include(c => c.Make)
+                .OrderBy(c => c.CarID)
+                .Where(c => c.Flag == false && (makeid == 0||c.MakeID == makeid) && (searchtxt.IsNullOrEmpty() || c.CarName.Contains(searchtxt)))
+                .Select(c => new CarDto
             {
                 CarID = c.CarID,
                 CarName = c.CarName,
@@ -166,181 +202,211 @@ namespace WebPBL3.Controllers
                 MakeID = c.MakeID,
                 MakeName = c.Make.MakeName,
             }).ToListAsync();
-            var total = cars.Count;
+            // tổng số sản phẩm
+            int total = cars.Count();
+            // tổng số trang
             var totalPage = (total +limits - 1) / limits;
+            // sử dụng khi previous là 1
             if (page < 1) page = 1;
+            // sử dụng khi next là totalPage 
             if (page > totalPage) page = totalPage;
+
             ViewBag.totalRecord = total;
             ViewBag.totalPage = totalPage;
             ViewBag.currentPage = page;
             ViewBag.makeid = makeid;
             ViewBag.searchtxt = searchtxt;
             cars = cars.Skip((page - 1) * limits).Take(limits).ToList();
-            int cnt = 0;
-            foreach (var car in cars)
-            {
-                car.STT = ++cnt;
-            }    
+             
             return View(cars);
         }
         // [GET]
+        [Authorize(Roles = "Admin, Staff")]
         public IActionResult Create()
         {
-           
-            
-            
             return View();
         }
         // [POST]
         [HttpPost]
-        public async Task<IActionResult> Create(CarDto c, IFormFile uploadimage)
-        
+        [Authorize(Roles = "Admin, Staff")]
+        public async Task<IActionResult> Create(CarDto car, IFormFile uploadimage)
         {
-            
+            foreach (var state in ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    Console.WriteLine($"Property: {state.Key}, Error: {error.ErrorMessage}");
+                }
+            }
 
             if (ModelState.IsValid)
-              
-            {
+            {   
+                // carid bằng 1 vì trường hợp tập rỗng
                 var carid = 1;
-                var lastCar = _db.Cars.OrderByDescending(car => car.CarID).FirstOrDefault();
+                // lấy xe có id lớn nhất
+                var lastCar = await _db.Cars.OrderByDescending(c => c.CarID).FirstOrDefaultAsync();
                 if (lastCar != null)
                 {
                     carid = Convert.ToInt32(lastCar.CarID.Substring(2)) + 1;
                 }
+                // chuyển về đúng định dạng OT - 6 chữ số
                 var caridTxt = "OT" + carid.ToString().PadLeft(6, '0');
-                c.CarID = caridTxt;
-                int index = uploadimage.FileName.IndexOf('.');
-                string _FileName = "car" + c.CarID + "." + uploadimage.FileName.Substring(index + 1);
-                c.Photo = _FileName;
-                _db.Cars.Add( new Car
-                {
-                    CarID = c.CarID,
-                    CarName = c.CarName,
-                    Photo = c.Photo,
+                car.CarID = caridTxt;
 
-                    Capacity = c.Capacity,
-                    FuelConsumption = c.FuelConsumption,
-                    Color = c.Color,
+                
 
-                    Description = c.Description,
-                    Dimension = c.Dimension,
-                    Engine = c.Engine,
-
-                    Origin = c.Origin,
-                    Price = c.Price,
-                    Quantity = c.Quantity,
-
-                    Seat = c.Seat,
-                    Topspeed = c.Topspeed,
-                    Year = c.Year,
-
-                    MakeID = c.MakeID,
-
-                });
-                    
-                await _db.SaveChangesAsync();
+                
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\car", _FileName);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFileName += Path.GetExtension(uploadimage!.FileName);
+                    car.Photo = newFileName;
+                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\car", newFileName);
+                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
                     {
                         await uploadimage.CopyToAsync(fileStream);
 
-					}
-                }    
-                return RedirectToAction("CarListTable");
-                
-            }
-            return View(c);
-            
-        }
-        public IActionResult Edit(string? id)
-        {
+                    }
+                }
+                try
+                {
+                    _db.Cars.Add(new Car
+                    {
+                        CarID = car.CarID,
+                        CarName = car.CarName,
+                        Photo = car.Photo,
 
-            
-            if (String.IsNullOrEmpty(id))
-            {
-                return NotFound();
+                        Capacity = car.Capacity,
+                        FuelConsumption = car.FuelConsumption,
+                        Color = car.Color,
+
+                        Description = car.Description,
+                        Dimension = car.Dimension,
+                        Engine = car.Engine,
+
+                        Origin = car.Origin,
+                        Price = car.Price,
+                        Quantity = car.Quantity,
+
+                        Seat = car.Seat,
+                        Topspeed = car.Topspeed,
+                        Year = car.Year,
+
+                        MakeID = car.MakeID,
+
+                    });
+
+                    await _db.SaveChangesAsync();
+                }
+                catch (DbUpdateException ex)
+                {
+                    // 404
+                    return BadRequest("Error add car: " + ex.Message);
+
+                }
+                return RedirectToAction("CarListTable");
+
             }
-            Car? c = _db.Cars.Find(id);
-            
-            if (c == null)
+            return View(car);
+
+        }
+        [Authorize(Roles = "Admin, Staff")]
+        public async Task<IActionResult> Edit(string? id)
+        {
+            if (string.IsNullOrEmpty(id))
             {
-                return NotFound();
+                return NotFound("Id is null");
             }
+            Car? car = await _db.Cars.FirstOrDefaultAsync(c => c.CarID == id);
             
+            if (car == null)
+            {
+                return NotFound("Car is not found");
+            }
+
             CarDto carDtoFromDb = new CarDto
             {
-                CarID = c.CarID,
-                CarName = c.CarName,
-                Photo = c.Photo,
+                CarID = car.CarID,
+                CarName = car.CarName,
+                Photo = car.Photo,
 
-                Capacity = c.Capacity,
-                FuelConsumption = c.FuelConsumption,
-                Color = c.Color,
+                Capacity = car.Capacity,
+                FuelConsumption = car.FuelConsumption,
+                Color = car.Color,
 
-                Description = c.Description,
-                Dimension = c.Dimension,
-                Engine = c.Engine,
+                Description = car.Description,
+                Dimension = car.Dimension,
+                Engine = car.Engine,
 
-                Origin = c.Origin,
-                Price = c.Price,
-                Quantity = c.Quantity,
+                Origin = car.Origin,
+                Price = car.Price,
+                Quantity = car.Quantity,
 
-                Seat = c.Seat,
-                Topspeed = c.Topspeed,
-                Year = c.Year,
+                Seat = car.Seat,
+                Topspeed = car.Topspeed,
+                Year = car.Year,
 
-                MakeID = c.MakeID,
-               
+                MakeID = car.MakeID,
+
             };
             return View(carDtoFromDb);
         }
         [HttpPost]
-
-        public async Task<IActionResult> Edit(CarDto c,IFormFile? uploadimage)
+        [Authorize(Roles = "Admin, Staff")]
+        public async Task<IActionResult> Edit(CarDto cardto,IFormFile? uploadimage)
         {
             
             if (ModelState.IsValid)
             {   
-                Car car = _db.Cars.Where(ca => ca.CarID == c.CarID).FirstOrDefault();
+                Car? car = await _db.Cars.FirstOrDefaultAsync(c => c.CarID == cardto.CarID);
+                if (car == null)
+                {
+                    return NotFound("Car is not found");
+                }
                 if (uploadimage != null && uploadimage.Length > 0)
                 {
-                    int index = uploadimage.FileName.IndexOf('.');
-                    
-                    string _FileName = "car" + c.CarID + "." + uploadimage.FileName.Substring(index+1);
-                    c.Photo = _FileName;
-                    string _path = Path.Combine(_environment.WebRootPath, "upload\\car", _FileName);
-                    Console.WriteLine(_path);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
+                    string newFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                    newFileName += Path.GetExtension(uploadimage!.FileName);
+                    if (!car.Photo.IsNullOrEmpty())
+                    {
+                        string oldImageFullPath = Path.Combine(_environment.WebRootPath, "upload\\car", car.Photo);
+                        if (System.IO.File.Exists(oldImageFullPath))
+                        {
+                            System.IO.File.Delete(oldImageFullPath);
+                        }
+                    }
+                    cardto.Photo = newFileName;
+                    string imageFullPath = Path.Combine(_environment.WebRootPath, "upload\\car", newFileName);
+                    using (var fileStream = new FileStream(imageFullPath, FileMode.Create))
                     {
                         await uploadimage.CopyToAsync(fileStream);
 
-					}
+                    }
                 }
                 
-                car.CarName = c.CarName;
-                car.Photo = c.Photo;
 
-                car.Capacity = c.Capacity;
-                car.FuelConsumption = c.FuelConsumption;
-                car.Color = c.Color;
+                car.CarName = cardto.CarName;
+                car.Photo = cardto.Photo;
 
-                car.Description = c.Description;
-                car.Dimension = c.Dimension;
-                car.Engine = c.Engine;
+                car.Capacity = cardto.Capacity;
+                car.FuelConsumption = cardto.FuelConsumption;
+                car.Color = cardto.Color;
 
-                car.Origin = c.Origin;
-                car.Price = c.Price;
-                car.Quantity = c.Quantity;
+                car.Description = cardto.Description;
+                car.Dimension = cardto.Dimension;
+                car.Engine = cardto.Engine;
 
-                car.Seat = c.Seat;
-                car.Topspeed = c.Topspeed;
-                car.Year = c.Year;
+                car.Origin = cardto.Origin;
+                car.Price = cardto.Price;
+                car.Quantity = cardto.Quantity;
 
-                car.MakeID = c.MakeID;
-                
-               
+                car.Seat = cardto.Seat;
+                car.Topspeed = cardto.Topspeed;
+                car.Year = cardto.Year;
+
+                car.MakeID = cardto.MakeID;
+
+
                 try
                 {
                     _db.Cars.Update(car);
@@ -350,89 +416,87 @@ namespace WebPBL3.Controllers
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    NotFound();
+                    // 404
+                    return BadRequest("Error edit car: " + ex.Message);
 
                 }
-
-
                 return RedirectToAction("CarListTable");
             }
-            return View(c);
+            return View(cardto);
 
         }
-
-
-        public IActionResult Details(string? id)
+        [Authorize(Roles = "Admin, Staff")]
+        public async Task<IActionResult> Details(string? id)
         {
             
-            if (String.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id))
             {
-                return NotFound();
+                return NotFound("Id is null");
             }
-            Car? c = _db.Cars.Find(id);
+            Car? car = await _db.Cars.FirstOrDefaultAsync(c => c.CarID == id);
 
-            if (c == null)
+            if (car == null)
             {
-                return NotFound();
+                return NotFound("Car is not found");
             }
-            var makeName = _db.Makes.Where(m => m.MakeID == c.MakeID).FirstOrDefault().MakeName;
+            Make? make = await _db.Makes.FirstOrDefaultAsync(m => m.MakeID == car.MakeID);
+            
             CarDto carDtoFromDb = new CarDto
             {
-                CarID = c.CarID,
-                CarName = c.CarName,
-                Photo = c.Photo,
+                CarID = car.CarID,
+                CarName = car.CarName,
+                Photo = car.Photo,
 
-                Capacity = c.Capacity,
-                FuelConsumption = c.FuelConsumption,
-                Color = c.Color,
+                Capacity = car.Capacity,
+                FuelConsumption = car.FuelConsumption,
+                Color = car.Color,
 
-                Description = c.Description,
-                Dimension = c.Dimension,
-                Engine = c.Engine,
+                Description = car.Description,
+                Dimension = car.Dimension,
+                Engine = car.Engine,
 
-                Origin = c.Origin,
-                Price = c.Price,
-                Quantity = c.Quantity,
+                Origin = car.Origin,
+                Price = car.Price,
+                Quantity = car.Quantity,
 
-                Seat = c.Seat,
-                Topspeed = c.Topspeed,
-                Year = c.Year,
+                Seat = car.Seat,
+                Topspeed = car.Topspeed,
+                Year = car.Year,
 
-                MakeID = c.MakeID,
-                MakeName = makeName,
+                MakeID = car.MakeID,
+                MakeName = make.MakeName,
 
             };
             return View(carDtoFromDb);
         }
-        
+        [Authorize(Roles = "Admin, Staff")]
         public async Task<IActionResult> Delete(string? id)
         {
             
-            if (String.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id))
             {
-                
-                return NotFound();
+                return NotFound("Id is null");
             }
-            Car? car = _db.Cars.FirstOrDefault(c => c.CarID == id);
+            Car? car = await _db.Cars.FirstOrDefaultAsync(c => c.CarID == id);
 
             if (car == null)
             {
-                return NotFound();
+                return NotFound("Car is not found");
             }
            
             car.Flag = true;
             try
             {
                 _db.Cars.Update(car);
-
                 await _db.SaveChangesAsync();
-
+                
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                NotFound();
-
+                
+                return BadRequest("Error delete car: " + ex.Message);
             }
+
             return RedirectToAction("CarListTable");
             
         }

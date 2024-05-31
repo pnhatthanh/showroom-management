@@ -1,40 +1,39 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebPBL3.Models
+namespace WebPBL3.DTO
 {
     public class CarDto
     {
-        public int? STT;
         public string? CarID { get; set; }
         [Required]
-        public string CarName { get; set; }
+        public string CarName { get; set; } = string.Empty;
         [Required]
         public double Price { get; set; }
 
         [Required]
         public int Seat { get; set; }
         [Required]
-        public string Origin { get; set; }
+        public string Origin { get; set; } = string.Empty;
         [Required]
-        public string Dimension { get; set; }
+        public string Dimension { get; set; } = string.Empty;
         [Required]
         public double Capacity { get; set; }
         [Required]
         public float Topspeed { get; set; }
         [Required]
-        public string Color { get; set; }
+        public string Color { get; set; } = string.Empty;
         [Required]
-        public string Photo { get; set; }
+        public string Photo { get; set; } = string.Empty;
         [Required]
         public int Year { get; set; }
         [Required]
-        public string Engine { get; set; }
+        public string Engine { get; set; } = string.Empty;
         [Required]
         public int Quantity { get; set; }
         [Required]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
         [Required]
-        public string FuelConsumption { get; set; }
+        public string FuelConsumption { get; set; } = string.Empty;
         
         public string? MakeName { get; set; }
         

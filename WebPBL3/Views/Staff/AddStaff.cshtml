@@ -1,8 +1,7 @@
-﻿@model WebPBL3.Models.AddStaffDTO
-@using WebPBL3.Models
-@using Newtonsoft.Json
+﻿@model WebPBL3.DTO.Staff.AddStaffDTO
+
 @{
-    ViewData["Title"] = "AddStaff";
+    ViewData["Title"] = "Thêm nhân viên";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -42,13 +41,13 @@
                             <!-- Form Group (first name)-->
                             <div class="col-md-6">
                                 <label asp-for="FullName" class="control-label">Họ và Tên</label>
-                                <input asp-for="FullName" class="form-control" />
+                                <input asp-for="FullName" id="FullName" class="form-control" />
                                 <span asp-validation-for="FullName" class="text-danger"></span>
                             </div>
                             <!-- Form Group (last name)-->
                             <div class="col-md-6">
                                 <label asp-for="Email" class="control-label">Email</label>
-                                <input asp-for="Email" class="form-control" />
+                                <input asp-for="Email" id="Email" class="form-control" />
                                 <span asp-validation-for="Email" class="text-danger"></span>
 
                             </div>
@@ -58,13 +57,13 @@
                             <!-- Form Group (organization name)-->
                             <div class="col-md-6">
                                 <label asp-for="PhoneNumber" class="control-label">Số điện thoại</label>
-                                <input asp-for="PhoneNumber" class="form-control" />
+                                <input asp-for="PhoneNumber" id="PhoneNumber" class="form-control" />
                                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                             </div>
                             <!-- Form Group (location)-->
                             <div class="col-md-6">
                                 <label asp-for="IdentityCard" class="control-label">CCCD</label>
-                                <input asp-for="IdentityCard" class="form-control" />
+                                <input asp-for="IdentityCard" id="IdentityCard" class="form-control" />
                                 <span asp-validation-for="IdentityCard" class="text-danger"></span>
                             </div>
                         </div>
@@ -73,7 +72,7 @@
                             <!-- Form Group (organization name)-->
                             <div class="col-md-6">
                                 <label asp-for="Gender" class="control-label">Giới tính</label>
-                                <select asp-for="Gender" class="form-control">
+                                <select asp-for="Gender" id="Gender" class="form-control">
                                     <option value="">--Chọn giới tính--</option>
                                     <option value="True">Nam</option>
                                     <option value="False">Nữ</option>
@@ -83,7 +82,7 @@
                             <!-- Form Group (location)-->
                             <div class="col-md-6">
                                 <label asp-for="BirthDate" class="control-label">Ngày sinh</label>
-                                <input asp-for="BirthDate" class="form-control" type="date" />
+                                <input asp-for="BirthDate" id="BirthDate" class="form-control" type="date" />
                                 <span asp-validation-for="BirthDate" class="text-danger"></span>
                             </div>
                         </div>
@@ -120,19 +119,19 @@
                             <!-- Form Group (birthday)-->
                             <div class="col-md-6">
                                 <label asp-for="Address" class="control-label">Số nhà, đường</label>
-                                <input asp-for="Address" class="form-control" />
+                                <input asp-for="Address" id="address" class="form-control" />
                                 <span asp-validation-for="Address" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row gx-3 mb-3">
                             <div class="col-md-6">
                                 <label asp-for="Position" class="control-label">Chức vụ</label>
-                                <input asp-for="Position" class="form-control" />
+                                <input asp-for="Position" id="Position" class="form-control" />
                                 <span asp-validation-for="Position" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
                                 <label asp-for="Salary" class="control-label">Lương</label>
-                                <input asp-for="Salary" class="form-control" />
+                                <input asp-for="Salary" id="Salary" class="form-control" />
                                 <span asp-validation-for="Salary" class="text-danger"></span>
                             </div>
                         </div>
@@ -175,17 +174,12 @@
             $('#district').empty();
             resetWards();
             getDistricts(selectedProvinceId);
-            var selectedProvinceName = $("#city option:selected").text();
-            document.getElementById('ProvinceName').value = selectedProvinceName;
+            console.log(selectedProvinceId);
         } else {
             $('#district').empty(); // Nếu không có tỉnh được chọn, xóa danh sách huyện
             resetWards();// Xóa danh sách xã
             document.getElementById('ProvinceName').value = '';
         }
-    });
-    document.getElementById('ward').addEventListener('change', function () {
-        var selectedWardName = $("#ward option:selected").text();
-        document.getElementById('WardName').value = selectedWardName;
     });
     function resetWards() {
         $('#ward').empty();
@@ -216,14 +210,16 @@
         var selectedDistrictId = this.value; // Lấy ID của huyện đã chọn
         if (selectedDistrictId) {
             getWards(selectedDistrictId); // Gọi hàm để lấy danh sách xã dựa trên huyện đã chọn
-            var selectedDistrictName = $("#district option:selected").text();
-            document.getElementById('DistrictName').value = selectedDistrictName;
+            console.log(selectedDistrictId);
         } else {
             $('#ward').empty(); // Nếu không có huyện được chọn, xóa danh sách xã
             document.getElementById('DistrictName').value = '';
         }
     });
-
+    document.getElementById('ward').addEventListener('change', function () { 
+        var selectedWard = this.value;
+        console.log(selectedWard);
+    });
     function getWards(districtId) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '@Url.Action("GetWard", "Staff")?id=' + districtId, true); // Tạo đường dẫn sử dụng @Url.Action()
@@ -259,6 +255,7 @@
                 data.forEach(item => {
                     $('#city').append('<option value=' + item.provinceID + '>' + item.provinceName + '</option>');
                 });
+                
             } else {
                 console.error('Request failed. Returned status of', xhr.status);
             }
@@ -268,5 +265,13 @@
         };
         xhr.send();
     }
-
+    function updateAddress() {
+        var address = document.getElementById('address').value;
+        var ward = $("#ward option:selected").text();
+        var district = $("#district option:selected").text();
+        var province = $("#city option:selected").text();
+        var fullAddress = [address, ward, district, province].filter(Boolean).join(', ');
+        document.getElementById('address').value = fullAddress;
+        console.log(fullAddress);
+    }
  </script>

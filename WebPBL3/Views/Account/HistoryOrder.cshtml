@@ -1,0 +1,96 @@
+﻿@using WebPBL3.DTO
+@model List<HistoryOrderDto>
+@{
+    ViewData["Title"] = "Lịch sử mua hàng";
+
+
+}
+
+<div class="container-xl px-4" style="padding-top: 120px; padding-bottom: 10px">
+    <hr class="mt-0 mb-4">
+    @foreach (var obj in Model)
+    {
+        <div class="col-lg-10 col-xl-12">
+            <div class="card" style="border-radius: 10px;">
+                <div class="card-header px-4 py-5">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h5 class="mb-0" style="color: #0077B5">Cám ơn bạn đã mua hàng</h5>
+                        @if (obj.Status.Equals("Đã thanh toán"))
+                        {
+                            <h5 class="mb-0" style="color: forestgreen">
+                                <i class="fa-solid fa-money-check-dollar green_color" style="width: 22px; height: 22px;color: forestgreen !important"></i>Đã Thanh Toán
+                            </h5>
+                        }
+                        else
+                        {
+                            <h5 class="mb-0" style="color: darkred">
+                                <i class="fa-solid fa-money-check-dollar" style="width: 22px; height: 22px;"></i> Chưa Thanh Toán
+                            </h5>
+                        }
+
+
+                    </div>
+
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0" style="color: #0077B5">Mã đơn hàng: @obj.OrderID</h5>
+                        <p class=" text-muted mb-0"><i class="fa fa-calendar" style="width: 22px; height: 22px;"></i>  @obj.Date </p>
+                    </div>
+                    @foreach (var item in obj.Items)
+                    {
+                        <div class="card shadow-0 border mb-4">
+                            <div class="card-body">
+                                <div class="row" style="font-size: medium;">
+                                    <div class="col-md-2">
+                                        <img src="/upload/car/@item.Photo"
+                                             class="img-fluid" alt="Car">
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0">@item.CarName</p>
+                                    </div>
+                                    <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0">@item.MakeName</p>
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 ">@item.Color</p>
+                                    </div>
+                                    <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 ">@item.Quantity</p>
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <p class="text-muted mb-0 ">@String.Format("{0:N0}", item.Price) VNĐ</p>
+                                    </div>
+                                    <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                                        <a class="btn btn-primary btn-xs" href="@Url.Action("Detail", "Car", new { id = item.CarID })">
+                                            Xem lại xe
+                                        </a>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+                <div class="card-footer border-0 px-4 py-5"
+                     style="background-color:#0077B5; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+                    <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">
+                        Tổng tiền: <span class="h2 mb-0 ms-2">@String.Format("{0:N0}", obj.Totalprice) VNĐ</span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+
+
+
+    }
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('ftco-navbar').style.backgroundColor = 'black';
+    });
+</script>

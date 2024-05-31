@@ -1,4 +1,4 @@
-﻿
+﻿@using Microsoft.AspNetCore.Identity
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -43,32 +43,52 @@
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fa-solid fa-bars"></i>Menu
                     </button>
+                    
                     <div class="collapse navbar-collapse" id="ftco-nav">
-                        <ul class="navbar-nav ml-auto">
+                        <ul class="navbar-nav" >
                             <li class="nav-item active"><a href="@Url.Action("Index", "Home")" class="nav-link">Trang Chủ</a></li>
                             <li class="nav-item "><a href="@Url.Action("About", "Home")" class="nav-link">Giới Thiệu</a></li>
-                            <li class="nav-item"><a href="@Url.Action("Index", "Car")" class="nav-link">Hãng Xe</a></li>
+                            <li class="nav-item"><a href="@Url.Action("Index", "Car")" class="nav-link">Sản phẩm</a></li>
                             <li class="nav-item"><a href="@Url.Action("Index", "News")" class="nav-link">Tin Tức</a></li>
 							<li class="nav-item"><a href="@Url.Action("Index", "Contact")" class="nav-link">Liên Hệ</a></li>
-                        @if (Context.User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item nav-account">
-                                <a class="nav-link account-button">
-                                   <i class="fa-solid fa-user pr-2"></i>
-                                   Tài khoản</a>
-                                <ul class="sub-menu">
-                                    <li>Thông tin cá nhân</li>
-                                    <li>Đăng xuất</li>
-                                </ul>
-                            </li>
-                        }else{
-                            <li class="nav-item"><a href="@Url.Action("Login", "Account")" class="nav-link account-button">Đăng Nhập</a></li>
-                        }
+                            @if (!User.Identity.IsAuthenticated)
+                            {
+                                <li class="nav-item">   
+                                    <a href="@Url.Action("Login", "Account")" class="nav-link">Đăng nhập</a> 
+                                </li>
+                            } 
+
                         </ul>
+                        
                     </div>
+                    <div class="collapse navbar-collapse" id="ftco-nav">
+                    <ul class="navbar-nav ml-auto">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="dropdown-toggle nav-link" data-toggle="dropdown">
+                                    <img class="img-responsive rounded-circle" src="~/admin_images/layout_img/user_img.jpg" alt="#" style="width: 65px;" />
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="@Url.Action("InforAccount","Account")">Thông tin cá nhân</a>
+                                    <a class="dropdown-item" href="@Url.Action("ChangePassword","Account")">Thay đổi mật khẩu</a>
+                                    
+                                    @if (User.IsInRole("User"))
+                                    {
+                                        <a class="dropdown-item" href="@Url.Action("HistoryOrder","Account")">Lịch sử mua hàng</a>
+                                    }
 
+                                    <a class="dropdown-item" href="@Url.Action("Logout", "Account")">
+                                        <span>Log Out</span>
+                                        <i class="fa fa-sign-out"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                    </div>
                 </div>
-
+                
             </nav>
         </header>
     @* } *@
@@ -87,52 +107,48 @@
                     <div class="block footer_html">
                         <div class="block_content">
                             <div class="row">
-                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                                    <div class="service-body" >
-                                        
-                                        <div class="sb-text" >
-                                            <h5>MIỄN PHÍ BẢO DƯỠNG</h5>
-                                            <div style="display: flex; align-items: center;justify-content: center;">
-                                                <i class="fa-solid fa-truck" style="font-size: 40px;"></i>
+                                <div class="col-md-3 p-3">
+                                    <div class="service-body d-flex align-items-center justify-content-center">
+                                        <i class="fa-solid fa-truck pr-2" style="font-size: 30px;"></i>
+                                        <div class="sb-text">
+                                            <h5 style="color: darkred">MIỄN PHÍ BẢO DƯỠNG</h5>
+                                            <p class="m-0">Trong 1000 km đầu tiên</p>
+                                        </div>
+                                    </div>
+                                </div>
+                  
+                            <div class="col-md-3 p-3">
+                                <div class="service-body d-flex align-items-center justify-content-center">
+                                    <i class="fa-solid fa-arrow-rotate-left pr-2" style="font-size: 30px;"></i>
+                                    <div class="sb-text">
+                                        <h5 style="color: darkred">MIỄN PHÍ TRẢ HÀNG</h5>
+                                            <p class="m-0">Chính sách hoàn trả 90 ngày</p>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="col-md-3 p-3">
+                                <div class="service-body d-flex align-items-center justify-content-center">
+                                    <i class="fa-solid fa-calendar-days pr-2" style="font-size: 30px;"></i>
+                                    <div class="sb-text">
+                                        <h5 style="color: darkred">CẬP NHẬT HÀNG NGÀY</h5>
+                                            <p class="m-0">Những sản phẩm mới nhất</p>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="col-md-3 p-3">
+                                <div class="service-body d-flex align-items-center justify-content-center">
+                                    <i class="fa-solid fa-phone pr-2" style="font-size: 30px;"></i>
 
-                                                <p>Trong 1000 km đầu tiên</p>
-                                            </div>
-                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                                    <div class="service-body" style="display: flex; align-items: center; justify-content: center;">
-                                        <i class="fa-solid fa-arrow-rotate-left" style="font-size: 40px;"></i>
-                                        <div class="sb-text">
-                                            <h5>MIỄN PHÍ TRẢ HÀNG</h5>
-                                            <p>Chính sách hoàn trả 90 ngày</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                                    <div class="service-body " style="display: flex; align-items: center;justify-content: center;">
-                                        <i class="fa-solid fa-calendar-days" style="font-size: 40px;"></i>
-                                        <div class="sb-text">
-                                            <h5>CẬP NHẬT HÀNG NGÀY</h5>
-                                            <p>Những sản phẩm mới nhất</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                                    <div class="service-body" style="display: flex; align-items: center;justify-content: center;">
-                                    <i class="fa-solid fa-phone" style="font-size: 40px;"></i>
-                             
-                                        <div class="sb-text">
-                                            <h5>HỖ TRỢ 24/7</h5>
-                                            <p>Hotline: 0777 345 123</a></p>
-                                        </div>
+                                    <div class="sb-text">
+                                        <h5 style="color: darkred">HỖ TRỢ 24/7</h5>
+                                        <p class="m-0">Hotline: 0777 345 123</a></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
         </section>
 
@@ -142,12 +158,12 @@
                 <div class="row mb-5">
                     <div class="col-md">
                         <div class="ftco-footer-widget mb-4">
-                            <h2 class="ftco-heading-2"><a href="#" class="logo">DRAGON<span>CAR</span></a></h2>
-                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                            <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
-                                <li class="ftco-animate"><a href="#"><i class="fa-brands fa-twitter" style="font-size:30px"></i></a></li>
-                                <li class="ftco-animate"><a href="#"><i class="fa-brands fa-facebook-f" style="font-size:30px"></i></a></li>
-                                <li class="ftco-animate"><a href="#"><i class="fa-brands fa-instagram" style="font-size:30px"></i></span></a></li>
+                            <h2 class="ftco-heading-2"><a href="#" class="logo ml-0">DRAGON<span>CAR</span></a></h2>
+                            <p>Chất Lượng, Sự Sang Trọng, Lựa Chọn – Xe Hơi, Đỉnh Cao Của Sự Tinh Tế</p>
+                            <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-3">
+                                <li class="ftco-animate"><a href="#" class="d-flex align-items-center justify-content-center"><i class="fa-brands fa-twitter" style="font-size: 1.6rem;"></i></a></li>
+                                <li class="ftco-animate"><a href="#" class="d-flex align-items-center justify-content-center"><i class="fa-brands fa-facebook-f" style="font-size: 1.6rem;"></i></a></li>
+                                <li class="ftco-animate"><a href="#" class="d-flex align-items-center justify-content-center"><i class="fa-brands fa-instagram " style="font-size: 1.6rem;"></i></a></li>
                             </ul>
                         </div>
                     </div>
@@ -178,7 +194,11 @@
                 </div>
             </div>
         </section>
-        <a href="@Url.Action("CarListTable", "Car")" style="background-color: darkred; color: white; padding: 10px 20px; text-decoration: none; display: inline-block;border-radius: 5px;">Đến trang quản lý</a>
+        
+        @if (User.Identity.IsAuthenticated && (User.IsInRole("Admin") || User.IsInRole("Staff")))
+        {
+            <a href="@Url.Action("CarListTable", "Car")" style="background-color: darkred; color: white; padding: 10px 20px; text-decoration: none; display: inline-block; border-radius: 5px;">Đến trang quản lý</a>
+        }
 
         
     </footer> 

@@ -10,9 +10,11 @@ using static NuGet.Packaging.PackagingConstants;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Policy = "Admin,Staff")]
     public class StatisticController : Controller
     {
         private readonly ApplicationDbContext _db;
@@ -25,6 +27,7 @@ namespace WebPBL3.Controllers
         
         public async Task<IActionResult> Index(DateOnly? _startTime = null, DateOnly? _endTime = null, string? maNV = null, string? maXe = null, string? hangXe = null)
         {
+            
             ViewBag._startTime = _startTime;
             ViewBag._endTime = _endTime;
             ViewBag.maNV = maNV;
@@ -35,10 +38,10 @@ namespace WebPBL3.Controllers
             DateTime endTime = DateTime.Now;
             DateTime startTime = endTime.AddMonths(-11);
 
-            ViewBag.userTotal = _db.Users.Count();
-            ViewBag.carTotal = _db.Cars.Count();
-            ViewBag.staffTotal = _db.Staffs.Count();
-            ViewBag.feedbackTotal = _db.Feedbacks.Count();
+            ViewBag.userTotal = await _db.Users.CountAsync();
+            ViewBag.carTotal = await _db.Cars.CountAsync();
+            ViewBag.staffTotal = await _db.Staffs.CountAsync();
+            ViewBag.feedbackTotal = await _db.Feedbacks.CountAsync();
 
            List<Order> orders = await _db.Orders
                 .Include(o => o.DetailOrders)
@@ -163,12 +166,28 @@ namespace WebPBL3.Controllers
         public IActionResult SaveExcel()
         {
             // Deserialize dữ liệu từ JSON sang list StatisticTable
-                Console.WriteLine(Request.Form["data"].ToString());
-                var statisticTables = JsonConvert.DeserializeObject<List<StatisticTable>>(Request.Form["data"], new JsonSerializerSettings { MaxDepth = 10 });
-            
+            //Console.WriteLine(Request.Form["data"].ToString());
+            var requestData = Request.Form["data"];
+            if (string.IsNullOrEmpty(requestData))
+            {
+                return BadRequest("Data is null or empty");
+            }
+            List<StatisticTable> statisticTables;
+            try
+            {
+                statisticTables = JsonConvert.DeserializeObject<List<StatisticTable>>(requestData, new JsonSerializerSettings { MaxDepth = 10 });
+            }
+            catch (JsonException ex)
+            {
                 
-                // Tạo một file Excel mới
-                using (var package = new ExcelPackage())
+                return BadRequest("Failed to deserialize data: " +  ex.Message);
+            }
+
+
+
+
+            // Tạo một file Excel mới
+            using (var package = new ExcelPackage())
                 {
                     // Tạo một sheet mới trong file Excel
                     var worksheet = package.Workbook.Worksheets.Add("Sheet1");
@@ -190,7 +209,7 @@ namespace WebPBL3.Controllers
                         worksheet.Cells[i + 2, 2].Value = statisticTables[i].CarID;
                         worksheet.Cells[i + 2, 3].Value = statisticTables[i].MakeName;
                         worksheet.Cells[i + 2, 4].Value = statisticTables[i].StaffID;
-                        worksheet.Cells[i + 2, 5].Value = statisticTables[i].Date;
+                        worksheet.Cells[i + 2, 5].Value = statisticTables[i].Date.ToString("yyyy-MM-dd");
                         worksheet.Cells[i + 2, 6].Value = statisticTables[i].Quantity;
                         worksheet.Cells[i + 2, 7].Value = statisticTables[i].Price;
                         worksheet.Cells[i + 2, 8].Value = statisticTables[i].Total;

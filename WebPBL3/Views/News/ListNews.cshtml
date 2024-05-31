@@ -1,4 +1,4 @@
-﻿@model IEnumerable<WebPBL3.DTO.NewsDto>
+﻿@* odel IEnumerable<WebPBL3.DTO.NewsDto>
 
 @{
     ViewData["Title"] = "Quản lý tin tức";
@@ -20,10 +20,16 @@
     </div>
     <div class="card-body p-4 table-bordered">
         <div class="row pb-3">
-            <div class="col-6">
+            <div class="col-4">
+                <div class=" input-group rounded">
+                    <input type="text" id="txtSearch" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" value="@searchtxt" />
+                    <span class="input-group-text border-0" id="search-addon">
+                        <i class="fas fa-search"></i>
+                    </span>
+                </div>
             </div>
+           
             <div class="col-6 text-end" style="text-align: right;">
-                @*  data-bs-toggle="modal" data-bs-target="#createNewsModal" *@
                 <a href="~/News/Create" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>  Thêm tin tức
                 </a>
@@ -154,4 +160,213 @@
     }
 </div>
 
-@* @Html.Partial("CreateNews") *@
+@* @Html.Partial("CreateNews")  *@
+
+
+@model IEnumerable<WebPBL3.DTO.NewsDto>
+
+@{
+    ViewData["Title"] = "Quản lý tin tức";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    int page = ViewBag.currentPage;
+    int total = ViewBag.totalPage;
+    int newid = ViewBag.newid;
+    string searchtxt = ViewBag.searchtxt;
+    string exactDate = ViewBag.exactDate;
+    string startDate = ViewBag.startDate;
+    string endDate = ViewBag.endDate;
+}
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Danh sách tin tức</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-4 table-bordered">
+        <div class="row pb-3">
+            <div class="col-12">
+                <div class="d-flex justify-content-between mb-3">
+                    <button class="btn btn-primary" onclick="showAllNews()">Tất cả</button>
+                    <button class="btn btn-secondary" onclick="toggleFilter()">Lọc</button>
+                </div>
+                <form id="searchForm" method="get" action="@Url.Action("ListNews")" style="display: none;">
+                    <div class="input-group rounded mb-3">
+                        <input type="text" id="txtSearch" name="searchtxt" class="form-control rounded" placeholder="Tên tác giả" aria-label="Search" aria-describedby="search-addon" value="@searchtxt" />
+                        <span class="input-group-text border-0" id="search-addon" onclick="document.getElementById('searchForm').submit();">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                    <div class="mb-3">
+                        <label>Loại lọc ngày:</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="dateFilterType" id="exactDateOption" value="exactDate" onclick="toggleDateInputs();" checked>
+                            <label class="form-check-label" for="exactDateOption">Ngày chính xác</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="dateFilterType" id="dateRangeOption" value="dateRange" onclick="toggleDateInputs();">
+                            <label class="form-check-label" for="dateRangeOption">Khoảng thời gian</label>
+                        </div>
+                        <button type="button" class="btn btn-info" onclick="showAllByAuthor()">Tất cả</button>
+                    </div>
+                    <div class="mb-3" id="exactDateInput">
+                        <label>Ngày tạo</label>
+                        <input type="date" id="exactDate" name="exactDate" class="form-control rounded" placeholder="Ngày tạo chính xác" aria-label="ExactDate" value="@exactDate" />
+                    </div>
+                    <div class="mb-3" id="dateRangeInput" style="display: none;">
+                        <label>Bắt đầu</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control rounded mb-2" placeholder="Từ ngày" aria-label="StartDate" value="@startDate" />
+                        <label>Kết thúc</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control rounded" placeholder="Đến ngày" aria-label="EndDate" value="@endDate" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Áp dụng</button>
+                </form>
+            </div>
+            <div class="col-12 text-end" style="text-align: right;">
+                <a href="~/News/Create" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Thêm tin tức
+                </a>
+            </div>
+        </div>
+
+        <!-- Thêm phần này để hiển thị thông báo -->
+        @if (!string.IsNullOrWhiteSpace(ViewBag.Message))
+        {
+            <div class="alert alert-warning" role="alert">
+                @ViewBag.Message
+            </div>
+        }
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tiêu đề</th>
+                    <th>Nội dung</th>
+                    <th>Ảnh</th>
+                    <th>Ngày tạo</th>
+                    <th>Tác Giả</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.OrderBy(u => u.NewsID))
+                {
+                    <tr>
+                        <td>@obj.STT</td>
+                        <td>@obj.Title</td>
+                        <td>@obj.Content</td>
+                        <td>
+                            <img src="~/images/@obj.Photo" width="100" height="auto;" />
+                        </td>
+                        <td>@obj.CreateAt.ToString("dd/MM/yyyy")</td>
+                        <td>@obj.FullName</td>
+                        <td>
+                            <div class="w-75 d-flex justify-content-around btn-group" role="group">
+                                <a asp-controller="News" asp-action="DetailUser" asp-route-id="@obj.NewsID" class="btn btn-outline-success">
+                                    <i class="fa-solid fa-eye"></i> Chi tiết
+                                </a>
+                                <a asp-controller="News" asp-action="Edit" asp-route-id="@obj.NewsID" class="btn btn-warning" >
+                                    <i class="fa-solid fa-pen-to-square"></i> Cập nhật
+                                </a>
+                                <a href="#myModal-@obj.NewsID" class="btn btn-danger" data-toggle="modal">
+                                    <i class="fa-solid fa-trash"></i> Xóa
+                                </a>
+                                <div id="myModal-@obj.NewsID" class="modal fade">
+                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div class="icon-box" style="margin-right: 10px;">
+                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;"></i>
+                                                </div>
+                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể undo.</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a asp-controller="News" asp-action="Delete" asp-route-id="@obj.NewsID" class="btn btn-danger">Xác nhận</a>
+                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (total > 0)
+    {
+        <ul style="display: flex; justify-content: center; align-items: center; padding: 0; margin-top: 10px; list-style: none;">
+            <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;">
+                <a asp-action="ListNews" asp-route-newid="@newid" asp-route-searchtxt="@searchtxt" asp-route-exactDate="@exactDate" asp-route-startDate="@startDate" asp-route-endDate="@endDate" asp-route-page="@(page - 1)" class="prev" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">&laquo;</a>
+            </li>
+            @for (int i = 1; i <= total; i++)
+            {
+                @if (i == page)
+                {
+                    <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;background-color: #37B247;">
+                        <a asp-action="ListNews" asp-route-newid="@newid" asp-route-searchtxt="@searchtxt" asp-route-exactDate="@exactDate" asp-route-startDate="@startDate" asp-route-endDate="@endDate" asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color: white;">@i</a>
+                    </li>
+                }
+                else
+                {
+                    <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;">
+                        <a asp-action="ListNews" asp-route-newid="@newid" asp-route-searchtxt="@searchtxt" asp-route-exactDate="@exactDate" asp-route-startDate="@startDate" asp-route-endDate="@endDate" asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">@i</a>
+                    </li>
+                }
+            }
+            <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;">
+                <a asp-action="ListNews" asp-route-newid="@newid" asp-route-searchtxt="@searchtxt" asp-route-exactDate="@exactDate" asp-route-startDate="@startDate" asp-route-endDate="@endDate" asp-route-page="@(page + 1)" class="next" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">&raquo;</a>
+            </li>
+        </ul>
+    }
+</div>
+
+<script>
+    function showAllNews() {
+        // Redirect to the ListNews action without any filters
+        window.location.href = '@Url.Action("ListNews", new { newid = 0, searchtxt = "", exactDate = "", startDate = "", endDate = "", page = 1 })';
+    }
+
+    function toggleFilter() {
+        const searchForm = document.getElementById('searchForm');
+        if (searchForm.style.display === 'none' || searchForm.style.display === '') {
+            searchForm.style.display = 'block';
+        } else {
+            searchForm.style.display = 'none';
+        }
+    }
+
+    function toggleDateInputs() {
+        const exactDateOption = document.getElementById('exactDateOption').checked;
+        document.getElementById('exactDateInput').style.display = exactDateOption ? 'block' : 'none';
+        document.getElementById('dateRangeInput').style.display = exactDateOption ? 'none' : 'block';
+    }
+
+    // Initialize the correct display on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        toggleDateInputs(); // Ensure correct date inputs are displayed initially
+        document.getElementById('exactDateOption').checked = false; // Uncheck the exact date option
+        document.getElementById('dateRangeOption').checked = false; // Uncheck the date range option
+    });
+    function showAllByAuthor() {
+        var authorName = document.getElementById('txtSearch').value;
+        if (authorName.trim() !== '') {
+            // Redirect to ListNews action with the author's name as a parameter
+            window.location.href = '@Url.Action("ListNews", new { newid = 0, searchtxt = "", exactDate = "", startDate = "", endDate = "", page = 1 })&searchtxt=' + authorName.trim();
+        }
+    }
+
+</script>
+
+
+
+

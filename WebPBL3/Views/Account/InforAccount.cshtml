@@ -1,0 +1,230 @@
+﻿@model UserDto;
+@{
+    var editable = ViewBag.Unchange;
+}
+
+<div class="container-xl px-4" style="padding-top: 95px">
+    <hr class="mt-0 mb-4">
+    <form method="post" enctype="multipart/form-data" asp-action="InforAccount">
+        <input type="hidden" name="UserID" value="@Model.UserID" />
+        <div class="row">
+            <div class="col-xl-4">
+                <!-- Profile picture card-->
+                <div class="card mb-4 mb-xl-0">
+                    <div class="card-body text-center">
+                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="~/upload/user/@Model.Photo" alt="" style=" width: 200px;height:200px;">
+                        <input asp-for="Photo" type="file" class="form-control" id="uploadimage" name="uploadimage" style="display: none;">
+                        <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                        <button type="button" class="btn btn-danger" style="position: relative; top: -10px;color: white;" id="choosePhotoButton">
+                            <i class="fa-solid fa-pen-to-square"></i> Thay đổi ảnh
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-8">
+                <!-- Account details card-->
+                <div class="card mb-4">
+                    <div class="card-header">Thông tin chi tiết</div>
+                    <div class="card-body">
+
+                        @if (TempData["Error"] != null)
+                        {
+                            <div class="text-danger">
+                                <span><b>Xin lỗi!</b> - @TempData["Error"] </span>
+                            </div>
+                        }
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (first name)-->
+                            <div class="col-md-6">
+                                <label asp-for="FullName" class="control-label">Họ và Tên</label>
+                                <input asp-for="FullName" class="form-control infor-account changeable" />
+                            </div>
+                            <!-- Form Group (last name)-->
+                            <div class="col-md-6">
+                                <label asp-for="Email" class="control-label">Email</label>
+                                <input asp-for="Email" class="form-control infor-account" readonly/>
+                            </div>
+                        </div>
+                        @if (ViewBag.Staff != null)
+                        {
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (first name)-->
+                                <div class="col-md-6">
+                                    <label class="control-label">Mã nhân viên</label>
+                                    <input value="@ViewBag.Staff.StaffID" class="form-control infor-account" readonly />
+                                </div>
+                                <!-- Form Group (last name)-->
+                                <div class="col-md-6">
+                                    <label class="control-label">Chức vụ</label>
+                                    <input value="@ViewBag.Staff.Position" class="form-control infor-account" readonly />
+                                </div>
+                            </div>
+                        }
+                        <!-- Form Row        -->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (organization name)-->
+                            <div class="col-md-6">
+                                <label asp-for="PhoneNumber" class="control-label">Số điện thoại</label>
+                                <input asp-for="PhoneNumber" class="form-control infor-account changeable" />
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="IdentityCard" class="control-label">CCCD</label>
+                                <input asp-for="IdentityCard" class="form-control infor-account changeable" />
+                            </div>
+                        </div>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Gender" class="control-label">Giới tính</label>
+                                <select asp-for="Gender" class="form-control infor-account">
+                                    <option value="">--Chọn giới tính--</option>
+                                    <option value="True">Nam</option>
+                                    <option value="False">Nữ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="BirthDate" class="control-label">Ngày sinh</label>
+                                <input asp-for="BirthDate" class="form-control infor-account" type="date" />
+                            </div>
+                        </div>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="ProvinceID" class="control-label">Tên tỉnh(Thành phố)</label>
+                                <select class="form-control infor-account changeable" id="city" asp-for="ProvinceID">
+                                    <option value="0" selected>--Chọn tên tỉnh(Thành phố)-</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DistrictID" class="control-label changeable">Tên quận(huyện)</label>
+                                <select class="form-control infor-account changeable" id="district" asp-for="DistrictID">
+                                    <option value="0" selected>--Chọn tên quận(huyện)--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row gx-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="WardName" class="control-label">Tên xã(phường)</label>
+                                <select class="form-control infor-account changeable" id="ward" asp-for="WardID">
+                                     <option value="0" selected>--Chọn tên xã(phường)--</option>
+                                 </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Address" class="control-label">Số nhà, đường</label>
+                                <input asp-for="Address" class="form-control infor-account changeable" />
+                            </div>
+                        </div>
+                        <div class="form row" style="display: flex; justify-content: flex-end;">
+                            <div class="form-group col-md-3">
+                                <button type="submit" class="btn btn-warning w-100">Cập nhật</button>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <a asp-action="ChangePassword" class="btn btn-success w-100">
+                                    Thay đổi mật khẩu
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </form>
+</div>
+<script>
+    var cities = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
+    var address = document.getElementById("address");
+    var fileInput = document.getElementById('uploadimage');
+    var profileImage = document.getElementById('profileimage');
+    var noChange = '@editable';
+
+    document.getElementById('choosePhotoButton').addEventListener('click', function () {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', function (event) {
+        if (event.target.files && event.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                profileImage.src = e.target.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('ftco-navbar').style.backgroundColor = 'black';
+        if (noChange == 'True' || @Html.Raw(ViewBag.Staff != null ? "true" : "false")) {
+            var inputs = document.querySelectorAll('.changeable');
+            for (var i = 0; i < inputs.length; i++) {
+                inputs[i].readOnly = true;
+            }
+        }
+    });
+
+    async function getData() {
+        try {
+            const response = await fetch("/Order/GetProvince");
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function getDistrict(id) {
+        try {
+            const response = await fetch(`/Order/GetDistrict/${id}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function getWard(id) {
+        try {
+            const response = await fetch(`/Order/GetWard/${id}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function renderCities() {
+        const res = await getData();
+        res.forEach(city => {
+            cities.options[cities.options.length] = new Option(city.provinceName, city.provinceID);
+        });
+        if ('@Model.ProvinceID' && '@Model.ProvinceID' !== '0') {
+            cities.value = @Model.ProvinceID;
+            const listDistrict = await getDistrict(cities.value);
+            listDistrict.forEach(district => {
+                districts.options[districts.options.length] = new Option(district.name, district.id);
+            });
+        }
+        cities.addEventListener('change', async () => {
+            districts.options.length = 1;
+            wards.options.length = 1;
+            const listDistrict = await getDistrict(cities.value);
+            listDistrict.forEach(district => {
+                districts.options[districts.options.length] = new Option(district.name, district.id);
+            });
+        })
+        districts.addEventListener('change', async () => {
+            wards.options.length = 1;
+            const listWard = await getWard(districts.value);
+            listWard.forEach(ward => {
+                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+            });
+        })
+        if ('@Model.DistrictID' !== '0') {
+            districts.value = @Model.DistrictID;
+            const listWard = await getWard(districts.value);
+            listWard.forEach(ward => {
+                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+            });
+        }
+        if ('@Model.WardID' !== '0') {
+            wards.value = @Model.WardID;
+        }
+    }
+    renderCities();
+</script>

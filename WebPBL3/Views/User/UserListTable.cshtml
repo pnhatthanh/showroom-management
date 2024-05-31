@@ -5,7 +5,9 @@
     Layout = "_AdminLayout";
     int page = ViewBag.currentPage;
     int total = ViewBag.totalPage;
-    string searchtxt = ViewBag.searchtxt;  
+    string searchtxt = ViewBag.searchtxt;
+    int fieldsearch = ViewBag.fieldsearch;
+    int count = 0;
 }
 
 <div class="card shadow border-0 mt-4">
@@ -27,7 +29,31 @@
                     </div>
                
             </div>
-            <div class="col-6 text-end" style="text-align: right;">
+            <div class="col-2">
+                <select class="form-control rounded" style="border: 2px solid #ced4da;" id="fieldsearch" name="fieldsearch">
+                        @if (ViewBag.fieldsearch == 1) {
+                            <option value="1" selected>Họ và tên</option>
+                        } else {
+                            <option value="1">Họ và tên</option>
+                        }
+                        @if (ViewBag.fieldsearch == 2) {
+                            <option value="2" selected>Số điện thoại</option>
+                        } else {
+                             <option value="2">Số điện thoại</option>
+                        }
+                        @if (ViewBag.fieldsearch == 3) {
+                            <option value="3" selected>Email</option>
+                        } else {
+                            <option value="3">Email</option>
+                        }
+                        @if (ViewBag.fieldsearch == 4) {
+                            <option value="4" selected>CCCD</option>
+                        } else {
+                            <option value="4">CCCD</option>
+                        }    
+                </select>
+            </div>
+            <div class="col-6 text-end " style="text-align: right;">
                 <a asp-controller="User" asp-action="Create" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>  Thêm khách hàng
                 </a>
@@ -69,7 +95,7 @@
                 @foreach (var obj in Model.OrderBy(u => u.UserID))
                 {
                     <tr>
-                        <td>@obj.STT</td>
+                        <td>@(++count)</td>
                         <td>@obj.UserID</td>
                         <td>
                             @obj.FullName
@@ -85,17 +111,18 @@
                         </td>
 
                         <td>
-                                @Html.DisplayFor(modelItem => obj.Address)
-                                @if (!string.IsNullOrEmpty(obj.WardName) && !string.IsNullOrEmpty(obj.DistrictName) && !string.IsNullOrEmpty(obj.ProvinceName))
+                            @{
+                                string Address = string.Empty;
+                                string address = !string.IsNullOrEmpty(obj.Address) ? obj.Address + "," : string.Empty;
+                                string wardname = !string.IsNullOrEmpty(obj.WardName) ? obj.WardName + "," : string.Empty;
+                                string districtname = !string.IsNullOrEmpty(obj.DistrictName) ? obj.DistrictName + "," : string.Empty;
+                                string provincename = !string.IsNullOrEmpty(obj.ProvinceName) ? obj.ProvinceName +"": string.Empty;
+                                if (!string.IsNullOrEmpty(wardname) && !string.IsNullOrEmpty(districtname) && !string.IsNullOrEmpty(provincename))
                                 {
-
-                                    @: ,
-                                    @Html.DisplayFor(modelItem => obj.WardName)
-                                    @: ,
-                                    @Html.DisplayFor(modelItem => obj.DistrictName)
-                                    @: ,
-                                    @Html.DisplayFor(modelItem => obj.ProvinceName)
+                                    Address = $"{address} {wardname} {districtname} {provincename}";
                                 }
+                            }
+                            @Address
                         </td>
                             
                      
@@ -121,31 +148,33 @@
                                     <i class="fa-solid fa-trash"></i>
                                     Xóa
                                 </a>
+                                
 
+                                <!-- Modal HTML -->
                                 <div id="myModal-@obj.UserID" class="modal fade">
-                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                    <div class="modal-dialog modal-dialog-centered modal-confirm">
                                         <div class="modal-content">
-                                            <div class="modal-header">
-                                                <div class="icon-box" style="margin-right: 10px;">
-                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;"></i>
+                                            <div class="modal-header flex-column">
+                                                <div class="icon-box">
+                                                    <i class="material-icons">&#xE5CD;</i>
                                                 </div>
-                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <h4 class="modal-title w-100">Xác nhận</h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             </div>
-                                            <div class="modal-body">
+                                            <div class="modal-body" style="color: black">
                                                 <p>Bạn có thực sự muốn xóa không? Quá trình này không thể hoàn tác.</p>
                                             </div>
-                                            <div class="modal-footer">
-                                                <a asp-controller="User" asp-action="Delete" asp-route-id="@obj.UserID" class="btn btn-danger">
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                <a asp-controller="User" asp-action="Delete" asp-route-id="@obj.UserID" class="btn btn-danger" style="color:white; line-height: 30px">
                                                     Xác nhận
                                                 </a>
-                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
-
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                
 
+                            </div> 
                             </div>
 
                         </td>
@@ -164,7 +193,7 @@
                 @if (i == page)
                 {
                     <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;background-color: #37B247;">
-                        <a asp-action="UserListTable"  asp-route-searchtxt="@searchtxt" asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                        <a asp-action="UserListTable" asp-route-searchtxt="@searchtxt" asp-route-fieldsearch="@fieldsearch" asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
                             @i
                         </a>
                     </li>
@@ -172,7 +201,7 @@
                 else
                 {
                     <li style="margin-left: 3px;padding: 0;width: 30px;height: 30px;line-height: 30px;-moz-border-radius: 100%;-webkit-border-radius: 100%;border-radius: 100%;">
-                        <a asp-action="UserListTable" asp-route-searchtxt="@searchtxt" asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
+                        <a asp-action="UserListTable" asp-route-searchtxt="@searchtxt" asp-route-fieldsearch="@fieldsearch" asp-route-page="@i" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;color:black">
                             @i
                         </a>
                     </li>
@@ -190,22 +219,24 @@
         if (event.keyCode === 13) {
             // Lấy giá trị từ txtSearch
             var searchValue = this.value;
-          
-            var url = "/User/UserListTable?searchtxt=" + searchValue;
+            var fieldSearch = document.getElementById("fieldsearch").value;
+            var url = "/User/UserListTable?searchtxt=" + searchValue + "&fieldsearch=" + fieldSearch;
 
             // Chuyển hướng đến URL
             window.location.href = url;
         }
     });
-    @* document.addEventListener("DOMContentLoaded", function () {
-        // Lấy tham chiếu đến ô nhập liệu
-        var searchInput = document.getElementById("txtSearch");
 
-        // Đặt con trỏ (cursor) vào cuối giá trị của ô nhập liệu
-        if (searchInput) {
-        searchInput.focus(); // Tập trung vào ô nhập liệu
-        searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length); // Đặt con trỏ ở cuối giá trị
-        }
-        }); *@
+    document.getElementById("fieldsearch").addEventListener("change", function () {
+
+        // Lấy giá trị từ makeSelect
+        var fieldSearch = this.value;
+        var searchValue = document.getElementById("txtSearch").value;
+        
+        var url = "/User/UserListTable?searchtxt=" + searchValue + "&fieldsearch=" + fieldSearch;
+        // Chuyển hướng đến URL
+        window.location.href = url;
+    });
+    
 </script>
 

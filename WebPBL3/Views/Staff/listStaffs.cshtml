@@ -1,9 +1,12 @@
 ﻿@model IEnumerable<WebPBL3.DTO.Staff.GetStaffDTO>
+@using WebPBL3.DTO.Staff;
+
 @{
     ViewData["Title"] = "Quản lý nhân viên";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     int page = ViewBag.currentPage;
     int total = ViewBag.totalPage;
+    var staffs = ViewBag.staffs as List<GetStaffDTO>;
 }
 
 <div class="card shadow border-0 mt-4">
@@ -22,14 +25,14 @@
                     <div class="form-row">
                         <div class="col-8">
                             <div class="input-group rounded">
-                                <input type="text" class="form-control rounded" id="searchTerm" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Search" aria-label="Search" aria-describedby="search-addon">
+                                <input type="text" class="form-control rounded" style="border: 2px solid #ced4da;" id="searchTerm" name="searchTerm" value="@ViewBag.SearchTerm" placeholder="Search" aria-label="Search" aria-describedby="search-addon">
                                 <span id="searchIcon" class="input-group-text border-0" id="search-addon" style="cursor: pointer;">
                                     <i class="fas fa-search"></i>
                                 </span>
                             </div>
                         </div>
                         <div class="col-4">
-                            <select class="form-control rounded" id="searchField" name="searchField">
+                            <select class="form-control rounded" style="border: 2px solid #ced4da;" id="searchField" name="searchField">
                                 @{
                                     var options = new Dictionary<string, string>
                                 {
@@ -59,7 +62,22 @@
                 </form>
             </div>
             
-            <div class="col-6 text-end" style="text-align: right;">
+            <div class="col-3 text-end" style="text-align: center;">
+                <form id="myForm" method="post" asp-controller="Staff" asp-action="SaveExcel">
+                    <button type="submit" class="btn" style="border: 2px solid black; padding: 5px 10px; display: inline-block;">
+                        <img src="~/images/excel (1).png" style="width: 22px; height: 22px; vertical-align: middle;" />
+                        <span style="vertical-align: middle;">Xuất file excel</span>
+                    </button>
+                    <input type="hidden" id="data" name="data" />
+                </form>
+                @if (TempData["Error"] != null)
+                {
+                    <div class="text-danger">
+                        <span><b>Xin lỗi!</b> - @TempData["Error"] </span>
+                    </div>
+                }
+            </div>
+            <div class="col-3 text-end" style="padding-right: 40px;">
                 <a asp-controller="Staff" asp-action="AddStaff" class="btn btn-primary">
                     <i class="fa-solid fa-plus"></i>  Thêm nhân viên
                 </a>
@@ -86,6 +104,9 @@
                         SĐT
                     </th>
                     <th>
+                        CCCD
+                    </th>
+                    <th>
                         Địa chỉ
                     </th>
                     <th>
@@ -101,7 +122,6 @@
                 @{ var stt = 1; }
                 @foreach (var obj in Model.OrderBy(u => u.StaffID))
                 {
-                    var stCheck = obj.Status ? "<i class='fa-solid fa-check' style='color: green;font-size: 18px;'></i>" : "<i class='fa-solid fa-xmark' style='color: red;font-size: 18px;'></i>";
                     <tr>
                         <td>@stt</td>
                         <td>@obj.StaffID</td>
@@ -126,10 +146,10 @@
                             @obj.PhoneNumber
                         </td>
                         <td>
-                            @obj.Address
+                            @obj.IdentityCard
                         </td>
                         <td>
-                            <a href="#" data-id="@obj.StaffID" class="btnStatus">@Html.Raw(stCheck)</a>
+                            @obj.Address
                         </td>
 
                         <td style ="width: 30px;">
@@ -148,26 +168,24 @@
                                 <a href="#myModal-@obj.StaffID" class="btn btn-danger" data-toggle="modal" style="border-radius: 5px;">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
-
                                 <div id="myModal-@obj.StaffID" class="modal fade">
-                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                    <div class="modal-dialog modal-dialog-centered modal-confirm">
                                         <div class="modal-content">
-                                            <div class="modal-header">
-                                                <div class="icon-box" style="margin-right: 10px;">
-                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;"></i>
+                                            <div class="modal-header flex-column">
+                                                <div class="icon-box">
+                                                    <i class="material-icons">&#xE5CD;</i>
                                                 </div>
-                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <h4 class="modal-title w-100">Xác nhận</h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             </div>
-                                            <div class="modal-body">
-                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể undo.</p>
+                                            <div class="modal-body" style="color: black">
+                                                <p>Bạn có thực sự muốn xóa không? Quá trình này không thể hoàn tác.</p>
                                             </div>
-                                            <div class="modal-footer">
-                                                <a asp-controller="Staff" asp-action="DeleteStaff" asp-route-id="@obj.StaffID" class="btn btn-danger">
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                <a asp-controller="Staff" asp-action="DeleteStaff" asp-route-id="@obj.StaffID" class="btn btn-danger" style="color:white; line-height: 30px">
                                                     Xác nhận
                                                 </a>
-                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
-
                                             </div>
                                         </div>
                                     </div>
@@ -233,37 +251,31 @@
             document.getElementById("page").value = 1;
             document.getElementById("searchForm").submit();
         });
-        document.querySelectorAll('.btnStatus').forEach(function (btn) {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                var id = this.getAttribute('data-id');
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', '/Staff/IsActive', true);
-                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
-                            var rs = JSON.parse(xhr.responseText);
-                            if (rs.success) {
-                                if (rs.isActive) {
-                                    btn.innerHTML = "<i class='fa-solid fa-check' style='color: green;font-size: 16px;'></i>";
-                                } else {
-                                    btn.innerHTML = "<i class='fa-solid fa-xmark' style='color: red;font-size: 16px;'></i>";
-                                }
-                            } else {
-                                alert('Có lỗi xảy ra khi cập nhật trạng thái.');
-                            }
-                        } else {
-                            alert('Có lỗi xảy ra khi gửi yêu cầu.');
-                        }
-                    }
-                };
-                xhr.send('id=' + encodeURIComponent(id));
-            });
-        });
+
+        var staffs = @Html.Raw(Json.Serialize(staffs));
+        
+        if (staffs && staffs.length >0) {
+            var staffCount = staffs.length;
+            var data = [];
+            for (var i = 0; i < staffCount; i++) {
+                data.push({
+                    StaffID: staffs[i].staffID,
+                    FullName: staffs[i].fullName,
+                    Gender: staffs[i].gender,
+                    PhoneNumber: staffs[i].phoneNumber,
+                    IdentityCard: staffs[i].identityCard,
+                    Email: staffs[i].email,
+                    Address: staffs[i].address,
+                    Position: staffs[i].position,
+                    Salary: staffs[i].salary
+                });
+            }
+            console.log(data);
+            $('#data').val(JSON.stringify(data));
+        } else {
+            console.log("Không có dữ liệu staffs.");
+        }
     </script>
-
-
 }
 
 

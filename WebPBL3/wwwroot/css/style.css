@@ -3806,7 +3806,7 @@ input[type="button"].btn-block {
   display: inline-block;
   padding-top: 0.3125rem;
   padding-bottom: 0.3125rem;
-  margin-right: 1rem;
+  margin-right: 5rem;
   font-size: 1.25rem;
   line-height: inherit;
   white-space: nowrap; }
@@ -5850,7 +5850,9 @@ button.bg-dark:focus {
   border-radius: 0.3rem !important; }
 
 .rounded-circle {
-  border-radius: 50% !important; }
+  border-radius: 50% !important; 
+  border: solid 1px;
+}
 
 .rounded-pill {
   border-radius: 50rem !important; }
@@ -8510,7 +8512,7 @@ a {
   color: #1089ff !important; }
 
 .ftco-navbar-light {
-    background: rgb(0 0 0 / 0%) !important;
+    background: rgb(0 0 0 / 0%);
     padding-top: 20px;
     padding-bottom: 20px;
     position: absolute;
@@ -8533,37 +8535,40 @@ a {
   @media (max-width: 991.98px) {
     .ftco-navbar-light .navbar-nav {
       padding-bottom: 10px; } }
-  .ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
+.ftco-navbar-light .navbar-nav .nav-item .nav-link {
     font-size: 18px;
     padding-top: .9rem;
     padding-bottom: .9rem;
     padding-left: 20px;
+    padding-right: 0px;
     color: #fff;
     font-weight: 400;
-    opacity: 1 !important; }
-    .ftco-navbar-light .navbar-nav > .nav-item > .nav-link:hover {
+    opacity: 1 !important;
+    width: 140px;
+}
+    .ftco-navbar-light .navbar-nav .nav-item .nav-link:hover {
       color: darkred; }
     @media (max-width: 991.98px) {
-      .ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
+      .ftco-navbar-light .navbar-nav .nav-item .nav-link {
         padding-left: 0;
         padding-right: 0;
         padding-bottom: 0;
         color: #fff; } }
-  .ftco-navbar-light .navbar-nav > .nav-item .dropdown-menu {
+  .ftco-navbar-light .navbar-nav .nav-item .dropdown-menu {
     border: none;
     background: #fff;
     -webkit-box-shadow: 0px 10px 34px -20px rgba(0, 0, 0, 0.41);
     -moz-box-shadow: 0px 10px 34px -20px rgba(0, 0, 0, 0.41);
     box-shadow: 0px 10px 34px -20px rgba(0, 0, 0, 0.41); }
-  .ftco-navbar-light .navbar-nav > .nav-item.ftco-seperator {
+  .ftco-navbar-light .navbar-nav .nav-item.ftco-seperator {
     position: relative;
     margin-left: 20px;
     padding-left: 20px; }
     @media (max-width: 991.98px) {
-      .ftco-navbar-light .navbar-nav > .nav-item.ftco-seperator {
+      .ftco-navbar-light .navbar-nav .nav-item.ftco-seperator {
         padding-left: 0;
         margin-left: 0; } }
-    .ftco-navbar-light .navbar-nav > .nav-item.ftco-seperator:before {
+    .ftco-navbar-light .navbar-nav .nav-item.ftco-seperator:before {
       position: absolute;
       content: "";
       top: 10px;
@@ -8572,9 +8577,9 @@ a {
       width: 2px;
       background: rgba(255, 255, 255, 0.05); }
       @media (max-width: 991.98px) {
-        .ftco-navbar-light .navbar-nav > .nav-item.ftco-seperator:before {
+        .ftco-navbar-light .navbar-nav .nav-item.ftco-seperator:before {
           display: none; } }
-  .ftco-navbar-light .navbar-nav > .nav-item.cta > a {
+  .ftco-navbar-light .navbar-nav .nav-item.cta a {
     color: #fff;
     border: 1px solid #1089ff;
     padding-top: .5rem;
@@ -8587,19 +8592,19 @@ a {
     -moz-border-radius: 2px;
     -ms-border-radius: 2px;
     border-radius: 2px; }
-    .ftco-navbar-light .navbar-nav > .nav-item.cta > a span {
+    .ftco-navbar-light .navbar-nav .nav-item.cta a span {
       display: inline-block;
       color: #fff; }
-    .ftco-navbar-light .navbar-nav > .nav-item.cta > a:hover {
+    .ftco-navbar-light .navbar-nav .nav-item.cta a:hover {
       background: #1089ff;
       border: 1px solid #1089ff; }
-  .ftco-navbar-light .navbar-nav > .nav-item.cta.cta-colored a {
+  .ftco-navbar-light .navbar-nav .nav-item.cta.cta-colored a {
     border: 1px solid #01d28e;
     background: #01d28e !important; }
-  .ftco-navbar-light .navbar-nav > .nav-item.active > a {
+  .ftco-navbar-light .navbar-nav .nav-item.active a {
     color: darkred; }
   @media (max-width: 991.98px) {
-    .ftco-navbar-light .navbar-nav > .nav-item.active > a {
+    .ftco-navbar-light .navbar-nav .nav-item.active a {
       color: darkred; } }
   .ftco-navbar-light .navbar-toggler {
     border: none;
@@ -8624,13 +8629,13 @@ a {
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
 }
     @media (max-width: 991.98px) {
-      .ftco-navbar-light.scrolled .nav-item > .nav-link {
+      .ftco-navbar-light.scrolled .nav-item .nav-link {
         padding-left: 0 !important;
         padding-right: 0 !important;
         padding-bottom: 0 !important; } }
-    .ftco-navbar-light.scrolled .nav-item.active > a {
+    .ftco-navbar-light.scrolled .nav-item.active a {
       color: darkred !important; }
-    .ftco-navbar-light.scrolled .nav-item.cta > a {
+    .ftco-navbar-light.scrolled .nav-item.cta a {
       color: #fff !important;
       background: #1089ff;
       border: none !important;
@@ -8643,7 +8648,7 @@ a {
       -moz-border-radius: 5px;
       -ms-border-radius: 5px;
       border-radius: 5px; }
-      .ftco-navbar-light.scrolled .nav-item.cta > a span {
+      .ftco-navbar-light.scrolled .nav-item.cta a span {
         display: inline-block;
         color: #fff !important; }
     .ftco-navbar-light.scrolled .nav-item.cta.cta-colored span {
@@ -8954,7 +8959,7 @@ a {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   -ms-border-radius: 3px;
-  border-radius: 3px;
+  border-radius: 5px;
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
   font-size: 15px; }
@@ -8966,7 +8971,7 @@ a {
     color: #fff !important; }
     .btn.btn-primary:hover {
         border: 1px solid #1089ff;
-        transform: scale(1.5,1.5);
+        transform: scale(1.2,1.2);
         transition: 0.5s;
         background: transparent;
         color: #1089ff;
@@ -9125,7 +9130,7 @@ a {
   text-transform: uppercase;
   font-weight: 600;
   letter-spacing: 2px;
-  color: rgba(0, 0, 0, 0.4);
+  color:  rgb(0 0 0);
   display: block; }
 
 .nav-pills {
@@ -10506,10 +10511,10 @@ textarea.form-control {
         color: #fff;
     }
 
-.form-control {
+/*.form-control {
     background: rgba(255, 255, 255, 0.2);
     border: none;
-    color: #fff;
+    color: #000;
 }
 
     .form-control::placeholder {
@@ -10521,7 +10526,7 @@ textarea.form-control {
         border: none;
         box-shadow: none;
         color: #fff;
-    }
+    }*/
 
 .btn-custom {
     background-color: rgb(254, 27, 27);
@@ -10563,4 +10568,15 @@ textarea.form-control {
 .forgot-pass:hover {
     color: rgb(254, 27, 27);
     cursor: pointer;
+}
+
+.infor-account{
+    color: black;
+    border: 1px solid black;
+}
+.infor-account:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
 }

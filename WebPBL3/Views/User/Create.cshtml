@@ -4,19 +4,9 @@
 
 @{
 
-
+    ViewData["Title"] = "Thêm khách hàng";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    var wardsJson = TempData["wards"] as string;
-    TempData.Keep("wards");
-    var wards = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Ward>>(wardsJson);
-
-    var districtsJson = TempData["districts"] as string;
-    TempData.Keep("districts");
-    var districts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<District>>(districtsJson);
-
-    var provincesJson = TempData["provinces"] as string;
-    TempData.Keep("provinces");
-    var provinces = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Province>>(provincesJson);
+  
 
 }
 
@@ -37,7 +27,7 @@
                     <!-- Profile picture help block-->
                         <input asp-for="Photo" type="file" class="form-control" id="uploadimage" name="uploadimage" style="display: none">
                     <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-                        <button id="choosePhotoButton" type="button" class="btn btn-primary" style="position: relative; top: -10px; background-color: gray; color: white;">
+                        <button id="choosePhotoButton" type="button" class="btn btn-primary" style="position: relative; top: -10px; background-color: dodgerblue; color: white;">
                             <i class="fa-solid fa-pen-to-square"></i> Thêm ảnh
                         </button>
                     <!-- Profile picture upload button-->
@@ -110,50 +100,41 @@
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (phone number)-->
                             <div class="col-md-6">
-                                <label asp-for="ProvinceName" class="control-label">Tên tỉnh(Thành phố)</label>
-                                <select id="city" asp-for="ProvinceName" class="form-control">
-                                    <option value="">--Chọn tên tỉnh(Thành phố)--</option>
-                                    @foreach (Province i in provinces)
-                                    {
-                                        <option value=@i.ProvinceName>@i.ProvinceName</option>
-
-                                    }
+                                <label class="control-label">Tên tỉnh(Thành phố)</label>
+                                <select id="city" class="form-control">
+                                    <option value="0">--Chọn tên tỉnh(Thành phố)--</option>
+                                    
                                     <!-- Các option cho Province sẽ được đổ vào đây -->
                                 </select>
-                                <span asp-validation-for="ProvinceName" class="text-danger"></span>
+                                
                             </div>
                             <!-- Form Group (birthday)-->
                             <div class="col-md-6">
-                                <label asp-for="DistrictName" class="control-label">Tên quận(huyện)</label>
+                                <label class="control-label">Tên quận(huyện)</label>
                                 
-                                <select id="district" asp-for="DistrictName" class="form-control">
-                                    <option value="">--Chọn tên quận(huyện)--</option>
-                                    @foreach (District i in districts)
-                                    {
-                                        <option value=@i.DistrictName>@i.DistrictName</option>
-
-                                    }
+                                <select id="district" class="form-control">
+                                    <option value="0">--Chọn tên quận(huyện)--</option>
+                                    
                                     <!-- Các option cho District sẽ được đổ vào đây -->
                                 </select>
-                                <span asp-validation-for="DistrictName" class="text-danger"></span>
+                                
                             </div>
                         </div>
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (phone number)-->
                             <div class="col-md-6">
-                                <label asp-for="WardName" class="control-label">Tên xã(phường)</label>
-                                
-                                <select id="ward" asp-for="WardName" class="form-control">
-                                    <option value="">--Chọn tên xã(phường)--</option>
-                                    @foreach (Ward i in wards)
-                                    {
-                                        <option value=@i.WardName>@i.WardName</option>
-
-                                    }
+                                <label class="control-label">Tên xã(phường)</label>
+                                <select id="ward" asp-for="WardID" class="form-control">
+                                    <option value="0">--Chọn tên xã(phường)--</option>
                                     <!-- Các option cho Ward sẽ được đổ vào đây -->
                                 </select>
-                                <span asp-validation-for="WardName" class="text-danger"></span>
+                                <span asp-validation-for="WardID" class="text-danger"></span>
                             </div>
+                            <!-- Input field to store selected ward ID -->
+                            <input type="hidden" id="WardID" name="WardID" />
+
+                          
+                  
                             <!-- Form Group (birthday)-->
                             <div class="col-md-6">
                                 <label asp-for="Address" class="control-label">Số nhà, đường</label>
@@ -179,6 +160,9 @@
     </form>
 </div>
 <script>
+    var cities = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
     // Get the file input element and the image element
     const fileInput = document.getElementById('uploadimage');
     const profileImage = document.getElementById('profileimage');
@@ -202,143 +186,74 @@
             reader.readAsDataURL(event.target.files[0]);
         }
     });
-</script>
-@* <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
-<script>
-    var citis = document.getElementById("city");
-    var districts = document.getElementById("district");
-    var wards = document.getElementById("ward");
-    var Parameter = {
-        url: "https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json",
-        method: "GET",
-        responseType: "application/json",
-    };
-    var promise = axios(Parameter);
-    promise.then(function (result) {
-        renderCity(result.data);
-    });
 
-    function renderCity(data) {
-        for (const x of data) {
-            var opt = document.createElement('option');
-            opt.value = x.Name;
-            opt.text = x.Name;
-            opt.setAttribute('data-id', x.Id);
-            citis.options.add(opt);
+    async function getData() {
+        try {
+            const response = await fetch("/Order/GetProvince");
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
         }
-        citis.onchange = function () {
-            district.length = 1;
-            ward.length = 1;
-            if (this.options[this.selectedIndex].dataset.id != "") {
-                const result = data.filter(n => n.Id === this.options[this.selectedIndex].dataset.id);
-
-                for (const k of result[0].Districts) {
-                    var opt = document.createElement('option');
-                    opt.value = k.Name;
-                    opt.text = k.Name;
-                    opt.setAttribute('data-id', k.Id);
-                    district.options.add(opt);
-                }
-            }
-        };
-        district.onchange = function () {
-            ward.length = 1;
-            const dataCity = data.filter((n) => n.Id === citis.options[citis.selectedIndex].dataset.id);
-            if (this.options[this.selectedIndex].dataset.id != "") {
-                const dataWards = dataCity[0].Districts.filter(n => n.Id === this.options[this.selectedIndex].dataset.id)[0].Wards;
-
-                for (const w of dataWards) {
-                    var opt = document.createElement('option');
-                    opt.value = w.Name;
-                    opt.text = w.Name;
-                    opt.setAttribute('data-id', w.Id);
-                    wards.options.add(opt);
-                }
-            }
-        };
     }
-</script> *@
-@* <div class="row">
-    <div class="col-md-12">
-        <form method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    async function getDistrict(id) {
+        try {
+            const response = await fetch(`/Order/GetDistrict/${id}`);
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function getWard(id) {
+        try {
+            const response = await fetch(`/Order/GetWard/${id}`);
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function renderCities() {
+        const res = await getData();
+        res.forEach(city => {
+            cities.options[cities.options.length] = new Option(city.provinceName, city.provinceID);
+        });
+        
+        cities.addEventListener('change', async () => {
+            districts.options.length = 1;
+            wards.options.length = 1;
+            const listDistrict = await getDistrict(cities.value);
+            listDistrict.forEach(district => {
+                districts.options[districts.options.length] = new Option(district.name, district.id);
+            });
             
-                <div class="form row">
-                <div class="form-group col-md-3">
-                    <label asp-for="FullName" class="control-label">Họ và Tên</label>
-                    <input asp-for="FullName" class="form-control" />
-                    <span asp-validation-for="FullName" class="text-danger"></span>
-                </div>
-                <div class="form-group col-md-3">
-                    <label asp-for="PhoneNumber" class="control-label">Số điện thoại</label>
-                    <input asp-for="PhoneNumber" class="form-control" />
-                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                </div>
-                <div class="form-group col-md-3">
-                    <label asp-for="Email" class="control-label">Email</label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="form-group col-md-3">
-                    <label asp-for="IdentityCard" class="control-label">CCCD</label>
-                    <input asp-for="IdentityCard" class="form-control" />
-                    <span asp-validation-for="IdentityCard" class="text-danger"></span>
-                </div>
-                </div>
-                <div class="form row">
-                    <div class="form-group col-md-3">
-                        <label asp-for="ProvinceName" class="control-label">Tên tỉnh(Thành phố)</label>
-                        <select id="provinceDropdown" asp-for="ProvinceName" class="form-control">
-                            @foreach (Province i in provinces)
-                            {
-                                <option value=@i.ProvinceName>@i.ProvinceName</option>
+            
+        })
+        districts.addEventListener('change', async () => {
+            wards.options.length = 1;
+            const listWard = await getWard(districts.value);
+            listWard.forEach(ward => {
+                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+            });
+            
+            
+        })
+        wards.addEventListener('change', async () => {
+            var selectedWardId = $("#ward option:selected").val();
+            
+            document.getElementById('WardID').value = selectedWardId;
+           
+        })
+        
+        
+    }
+    
+    renderCities();
 
-                            }
-                           <!-- Các option cho Province sẽ được đổ vào đây -->
-                        </select>
-                        <span asp-validation-for="ProvinceName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label asp-for="DistrictName" class="control-label">Tên quận(huyện)</label>
-                        <select id="districtDropdown" asp-for="DistrictName" class="form-control">
-                        @foreach (District i in districts)
-                        {
-                            <option value=@i.DistrictName>@i.DistrictName</option>
-
-                        }
-                            <!-- Các option cho District sẽ được đổ vào đây -->
-                        </select>
-                        <span asp-validation-for="DistrictName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label asp-for="WardName" class="control-label">Tên xã(phường)</label>
-                        <select id="wardDropdown" asp-for="WardName" class="form-control">
-                        @foreach (Ward i in wards)
-                        {
-                            <option value=@i.WardName>@i.WardName</option>
-
-                        }
-                            <!-- Các option cho Ward sẽ được đổ vào đây -->
-                        </select>
-                    <span asp-validation-for="WardName" class="text-danger"></span>
-                    </div>
-                <div class="form-group col-md-3">
-                    <label asp-for="Address" class="control-label">Số nhà, đường</label>
-                    <input asp-for="Address" class="form-control" />
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
-               </div>
-                <div class="form row" style="display: flex; justify-content: flex-end;">
-                <div class="form-group col-md-2">
-                    <button type="submit" class="btn btn-primary form-control">Thêm mới</button>
-                </div>
-                <div class="form-group col-md-2">
-                    <a asp-controller="User" asp-action="UserListTable" class="btn btn-outline-primary border form-control">
-                        Quay lại danh sách
-                    </a>
-                </div>
-            </div>
-
-        </form>
-    </div>
-</div> *@
+    
+    
+</script>

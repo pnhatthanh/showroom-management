@@ -19,11 +19,11 @@
                     <input asp-for="Title" class="form-control" />
                     <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
+                @* <div class="form-group col-md-3">
                     <label asp-for="Photo" class="control-label">Hình ảnh</label>
                     <input type="file" class="form-control" id="uploadimage" name="uploadimage">
                     <span asp-validation-for="Photo" class="text-danger"></span>
-                </div>
+                </div> *@
                 <div class="form-group col-md-3">
                     <label asp-for="CreateAt" class="control-label">Ngày Tạo</label>
                     <input class="form-control" name="NgayTao" value="@Html.Raw(DateTime.Now.ToString("yyyy-MM-dd").Replace(' ','T'))" type="da   tetime-local" />
@@ -55,3 +55,7 @@
     </div>
 </div>
 
+@section Scripts {
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/super-build/ckeditor.js"></script>
+    <script src="~/js/ckeditor-init.js"></script>
+}

@@ -1,23 +1,15 @@
-﻿@using WebPBL3.Models
+﻿@using WebPBL3.DTO
 @using Newtonsoft.Json
-@model WebPBL3.Models.UserDto
+@model UserDto
 
 @{
-
-
+    ViewData["Title"] = "Cập nhật khách hàng";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    var wardsJson = TempData["wards"] as string;
-    TempData.Keep("wards");
-    var wards = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Ward>>(wardsJson);
-
-    var districtsJson = TempData["districts"] as string;
-    TempData.Keep("districts");
-    var districts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<District>>(districtsJson);
-
-    var provincesJson = TempData["provinces"] as string;
-    TempData.Keep("provinces");
-    var provinces = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Province>>(provincesJson);
-    
+    string Photo = "userkh000000.jpg";
+    if (!string.IsNullOrEmpty(Model.Photo))
+    {
+        Photo = Model.Photo;
+    }
 }
 
 
@@ -34,11 +26,11 @@
                 <div class="card mb-4 mb-xl-0">
                     <div class="card-body text-center">
 						<!-- Profile picture image-->
-                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="~/upload/user/@Model.Photo" alt="" style=" width: 200px;height:200px;">
+                        <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="~/upload/user/@Photo" alt="" style=" width: 200px;height:200px;">
                         <!-- Profile picture help block-->
                         <input asp-for="Photo" type="file" class="form-control" id="uploadimage" name="uploadimage" style="display: none;">
                         <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-                        <button id="choosePhotoButton" type="button" class="btn btn-primary" style="position: relative; top: -10px; background-color: gray; color: white;">
+                        <button id="choosePhotoButton" type="button" class="btn btn-primary" style="position: relative; top: -10px; background-color: dodgerblue; color: white;">
                             <i class="fa-solid fa-pen-to-square"></i> Cập nhật ảnh
                         </button>
                         <!-- Profile picture upload button-->
@@ -111,29 +103,20 @@
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (phone number)-->
                             <div class="col-md-6">
-                                <label asp-for="ProvinceName" class="control-label">Tên tỉnh(Thành phố)</label>
-                                <select id="city" asp-for="ProvinceName" class="form-control">
-                                    <option value="">--Chọn tên tỉnh(Thành phố)--</option>
-                                    @foreach (Province i in provinces)
-                                    {
-                                        <option value=@i.ProvinceName>@i.ProvinceName</option>
-
-                                    }
+                                <label class="control-label">Tên tỉnh(Thành phố)</label>
+                                <select id="city" class="form-control">
+                                   
+                                       <option value="0">--Chọn tên tỉnh(Thành phố)--</option>  
                                     <!-- Các option cho Province sẽ được đổ vào đây -->
                                 </select>
-                                <span asp-validation-for="ProvinceName" class="text-danger"></span>
+                                
                             </div>
                             <!-- Form Group (birthday)-->
                             <div class="col-md-6">
-                                <label asp-for="DistrictName" class="control-label">Tên quận(huyện)</label>
+                                <label class="control-label">Tên quận(huyện)</label>
 
-                                <select id="district" asp-for="DistrictName" class="form-control">
-                                    <option value="">--Chọn tên quận(huyện)--</option>
-                                    @foreach (District i in districts)
-                                    {
-                                        <option value=@i.DistrictName>@i.DistrictName</option>
-
-                                    }
+                                <select id="district" class="form-control">                  
+                                    <option value="0">--Chọn tên quận(huyện)--</option>
                                     <!-- Các option cho District sẽ được đổ vào đây -->
                                 </select>
                                 <span asp-validation-for="DistrictName" class="text-danger"></span>
@@ -142,19 +125,15 @@
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (phone number)-->
                             <div class="col-md-6">
-                                <label asp-for="WardName" class="control-label">Tên xã(phường)</label>
+                                <label asp-for="WardID" class="control-label">Tên xã(phường)</label>
 
-                                <select id="ward" asp-for="WardName" class="form-control">
-                                    <option value="">--Chọn tên xã(phường)--</option>
-                                    @foreach (Ward i in wards)
-                                    {
-                                        <option value=@i.WardName>@i.WardName</option>
-
-                                    }
+                                <select id="ward" asp-for="WardID" class="form-control">
+                                    <option value="0">--Chọn tên xã(phường)--</option>
                                     <!-- Các option cho Ward sẽ được đổ vào đây -->
                                 </select>
-                                <span asp-validation-for="WardName" class="text-danger"></span>
+                                <span asp-validation-for="WardID" class="text-danger"></span>
                             </div>
+                            
                             <!-- Form Group (birthday)-->
                             <div class="col-md-6">
                                 <label asp-for="Address" class="control-label">Số nhà, đường</label>
@@ -164,10 +143,10 @@
                         </div>
                         <div class="form row" style="display: flex; justify-content: flex-end;">
                             <div class="form-group col-md-3">
-                                <button type="submit" class="btn btn-primary form-control">Cập nhật</button>
+                                <button type="submit" class="btn btn-warning form-control">Cập nhật</button>
                             </div>
                             <div class="form-group col-md-3">
-                                <a asp-controller="User" asp-action="UserListTable" class="btn btn-outline-primary border form-control">
+                                <a asp-controller="User" asp-action="UserListTable" class="btn btn-outline-success border form-control">
                                     Quay lại danh sách
                                 </a>
                             </div>
@@ -180,7 +159,9 @@
     </form>
 </div>
 <script>
-    
+    var cities = document.getElementById("city");
+    var districts = document.getElementById("district");
+    var wards = document.getElementById("ward");
     
     // Get the file input element and the image element
     const fileInput = document.getElementById('uploadimage');
@@ -205,4 +186,82 @@
             reader.readAsDataURL(event.target.files[0]);
         }
     });
+    async function getData() {
+        try {
+            const response = await fetch("/Order/GetProvince");
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function getDistrict(id) {
+        try {
+            const response = await fetch(`/Order/GetDistrict/${id}`);
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function getWard(id) {
+        try {
+            const response = await fetch(`/Order/GetWard/${id}`);
+            const data = await response.json();
+            console.log(data);
+            return data;
+        } catch (error) {
+            alert('Loi fetch api: ', error);
+        }
+    }
+    async function renderCities() {
+        const res = await getData();
+        res.forEach(city => {
+            cities.options[cities.options.length] = new Option(city.provinceName, city.provinceID);
+        });
+        
+        
+        if (@Model.WardID) {
+            cities.value = @ViewBag.ProvinceID;
+            
+            const listDistrict = await getDistrict(cities.value);
+            listDistrict.forEach(district => {
+                districts.options[districts.options.length] = new Option(district.name, district.id);
+            });
+            districts.value = @ViewBag.DistrictID;
+            const listWard = await getWard(districts.value);
+            listWard.forEach(ward => {
+                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+            });
+            wards.value = @Model.WardID;
+        } 
+        cities.addEventListener('change', async () => {
+            districts.options.length = 1;
+            wards.options.length = 1;
+            const listDistrict = await getDistrict(cities.value);
+            listDistrict.forEach(district => {
+                districts.options[districts.options.length] = new Option(district.name, district.id);
+            });
+
+        })
+        districts.addEventListener('change', async () => {
+            wards.options.length = 1;
+            const listWard = await getWard(districts.value);
+            listWard.forEach(ward => {
+                wards.options[wards.options.length] = new Option(ward.name, ward.id);
+            });
+
+
+        })
+        wards.addEventListener('change', async () => {
+            var selectedWardId = $("#ward option:selected").val();
+            document.getElementById('WardID').value = selectedWardId;
+        })
+
+
+    }
+    
+    renderCities();
 </script>

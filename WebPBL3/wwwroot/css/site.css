@@ -450,3 +450,32 @@ body {
         top: 2px;
         font-weight: 700;
     }
+.note-title {
+    text-align: center;
+    position: relative;
+    margin: 20px 0; /* Điều chỉnh khoảng cách theo ý muốn */
+}
+
+    .note-title::before,
+    .note-title::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 1px;
+        background-color: black;
+        position: absolute;
+        left: 0;
+    }
+
+    .note-title::before {
+        top: -10px; /* Điều chỉnh khoảng cách từ thẻ h3 */
+    }
+
+    .note-title::after {
+        bottom: -10px; /* Điều chỉnh khoảng cách từ thẻ h3 */
+    }
+
+.note-content {
+    text-align: center; /* Căn giữa nội dung của thẻ p */
+    color: red; /* Giữ nguyên màu sắc của văn bản */
+}

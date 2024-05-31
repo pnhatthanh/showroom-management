@@ -3476,7 +3476,7 @@ table.projects tr td:first-child {
             margin-top: 13px;
         }
 
-    .modal-confirm .btn {
+    .modal-confirm .btn, .modal-confirm .btn:active {
         color: #fff;
         border-radius: 4px;
         background: #60c7c1;
@@ -3488,14 +3488,13 @@ table.projects tr td:first-child {
         min-height: 40px;
         border-radius: 3px;
         margin: 0 5px;
-        outline: none !important;
     }
 
-    .modal-confirm .btn-info {
+    .modal-confirm .btn-secondary {
         background: #c1c1c1;
     }
 
-        .modal-confirm .btn-info:hover, .modal-confirm .btn-info:focus {
+        .modal-confirm .btn-secondary:hover, .modal-confirm .btn-secondary:focus {
             background: #a8a8a8;
         }
 

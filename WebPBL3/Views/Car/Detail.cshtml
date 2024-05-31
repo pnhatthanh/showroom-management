@@ -1,4 +1,5 @@
-﻿@model CarDto
+﻿@using WebPBL3.DTO
+@model CarDto
 <section class="hero-wrap hero-wrap-2 js-fullheight" style="background-image: url('@Url.Content("~/images/bg_3.jpg")');" data-stellar-background-ratio="0.5">
 	<div class="overlay"></div>
 	<div class="container">
@@ -7,10 +8,10 @@
 				<p class="breadcrumbs">
 					<span class="mr-2">
 						<a href="@Url.Action("Index", "Car")">
-							Xe <i class="ion-ios-arrow-forward"></i>
+							Sản phẩm <i class="ion-ios-arrow-forward"></i>
 						</a>
 					</span> <span>
-						 Chi tiết<i class="ion-ios-arrow-forward"></i>
+						 Chi tiết <i class="ion-ios-arrow-forward"></i>
 					</span>
 				</p>
 				<h1 class="mb-3 bread">Chi tiết ô tô</h1>
@@ -153,32 +154,9 @@
 		</div>
 		<div class="row">
 			<div class="col-md-12">
-				<div class="carousel-car owl-carousel">
+				<div class="carousel-car owl-carousel" style="padding-bottom:50px">
 					@foreach (var item in ViewBag.RelatedCars)
 					{
-						<div class="item" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);">
-							<a asp-action="Detail" asp-controller="Car" asp-route-id="@item.CarID" class="car-link">
-								<div class="car-wrap rounded ftco-animate">
-									<div class="img rounded d-flex align-items-end" style="background-image: url('@Url.Content("~/upload/car/" + item.Photo)');background-size: contain;">
-									</div>
-									<div class="text">
-										<h2 class="mb-0" style="font-size:24px"><a asp-action="Detail" asp-controller="Car" asp-route-id="@item.CarID">@item.CarName</a></h2>
-										<p class="price ml-auto" style="margin-top: 5px;font-size:16px;margin-bottom: 10px;">Giá: @String.Format("{0:N0}", item.Price) VNĐ</p>
-										<p class="d-flex mb-0 d-block"><a asp-action="Detail" asp-controller="Car" asp-route-id="@item.CarID" class="btn btn-primary detail-button">Chi tiết</a></p>
-									</div>
-								</div>
-							</a>
-						</div>
-					}
-					
-				</div>
-			</div>
-		</div>
-		@* <div class="row">
-			<div class="carousel-car owl-carousel">
-				@foreach (var item in ViewBag.RelatedCars)
-				{
-					<div class="col-lg-4 col-md-6 col-sm-12">
 						<div class="item" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);">
 							<a asp-action="Detail" asp-controller="Car" asp-route-id="@item.CarID" class="car-link">
 								<div class="car-wrap rounded ftco-animate">
@@ -192,9 +170,29 @@
 								</div>
 							</a>
 						</div>
-					</div>
-				}
+					}
+				</div>
 			</div>
-		</div> *@
+		</div>
 	</div>
 </section>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/owl.carousel.min.js"></script>
+<script>
+	$(document).ready(function () {
+		console.log("Document is ready.");
+		var relatedCarsCount = @ViewBag.RelatedCars.Count;
+		console.log("Related cars count: ", relatedCarsCount);
+		$(".owl-carousel").owlCarousel({
+			items: relatedCarsCount,
+			loop: true,
+			margin: 10,
+			nav: true,
+			autoplay: true,
+			autoplayTimeout: 3000,
+			autoplayHoverPause: true,
+		});
+		console.log("Owl Carousel initialized.");
+	});
+</script>

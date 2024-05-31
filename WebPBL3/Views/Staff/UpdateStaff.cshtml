@@ -1,5 +1,4 @@
-﻿@model WebPBL3.Models.AddStaffDTO
-
+﻿@model WebPBL3.DTO.Staff.AddStaffDTO
 
 @{
     ViewData["Title"] = "UpdateStaff";
@@ -98,7 +97,7 @@
                             <div class="col-md-6">
                                 <label asp-for="ProvinceName" class="control-label">Tên tỉnh(Thành phố)</label>
                                 <select id="city" asp-for="ProvinceName" class="form-control">
-                                    <option value="">--Chọn tên tỉnh(Thành phố)--</option>
+                                    <option value="@ViewBag.ProvinceID">@ViewBag.ProvinceName</option>
                                 </select>
                                 <span asp-validation-for="ProvinceName" class="text-danger"></span>
                             </div>
@@ -107,7 +106,7 @@
                                 <label asp-for="DistrictName" class="control-label">Tên quận(huyện)</label>
 
                                 <select id="district" asp-for="DistrictName" class="form-control">
-                                    <option value="">--Chọn tên quận(huyện)--</option>
+                                    <option value="@ViewBag.DistrictID">@ViewBag.DistrictName</option>
                                 </select>
                                 <span asp-validation-for="DistrictName" class="text-danger"></span>
                             </div>
@@ -118,7 +117,7 @@
                                 <label asp-for="WardName" class="control-label">Tên xã(phường)</label>
 
                                 <select id="ward" asp-for="WardName" class="form-control">
-                                    <option value="" selected>WardName</option>
+                                    <option value="@ViewBag.WardID">@ViewBag.WardName</option>
                                 </select>
                                 <span asp-validation-for="WardName" class="text-danger"></span>
                             </div>
@@ -158,6 +157,8 @@
         </div>
     </form>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script>
     document.getElementById('choosePhotoButton').addEventListener('click', function () {
         document.getElementById('photoInput').click();
@@ -174,26 +175,25 @@
     });
 
     document.getElementById('city').addEventListener('change', function () {
-        var selectedProvinceId = this.value; // Lấy ID của tỉnh đã chọn
+        var selectedProvinceId = this.value; 
         if (selectedProvinceId) {
-            $('#district').empty();
+            resetDistrict();
             resetWards();
             getDistricts(selectedProvinceId);
-            var selectedProvinceName = $("#city option:selected").text();
-            document.getElementById('ProvinceName').value = selectedProvinceName;
+            console.log(selectedProvinceId);
         } else {
-            $('#district').empty(); // Nếu không có tỉnh được chọn, xóa danh sách huyện
+            resetDistrict();
             resetWards();// Xóa danh sách xã
             document.getElementById('ProvinceName').value = '';
         }
     });
-    document.getElementById('ward').addEventListener('change', function () {
-        var selectedWardName = $("#ward option:selected").text();
-        document.getElementById('WardName').value = selectedWardName;
-    });
     function resetWards() {
         $('#ward').empty();
-        $('#ward').html('<option value="">--Chọn tên xã(phường)--</option>');
+        $('#ward').html('<option value="">Chọn tên xã(phường)</option>');
+    }
+    function resetDistrict(){
+        $('#district').empty();
+        $('#district').html('<option value="">Chọn tên quận(huyện)</option>');
     }
     function getDistricts(provinceId) {
         var xhr = new XMLHttpRequest();
@@ -201,8 +201,6 @@
         xhr.onload = function () {
             if (xhr.status >= 200 && xhr.status < 300) {
                 var data = JSON.parse(xhr.responseText);
-                $('#district').empty(); // Xóa danh sách huyện hiện tại
-                $('#district').html('<option value="">--Chọn tên quận(huyện)--</option>');
                 data.forEach(item => {
                     $('#district').append('<option value=' + item.id + '>' + item.name + '</option>'); // Thêm từng huyện vào danh sách
                 });
@@ -219,23 +217,24 @@
     document.getElementById('district').addEventListener('change', function () {
         var selectedDistrictId = this.value; // Lấy ID của huyện đã chọn
         if (selectedDistrictId) {
+            resetWards();
             getWards(selectedDistrictId); // Gọi hàm để lấy danh sách xã dựa trên huyện đã chọn
-            var selectedDistrictName = $("#district option:selected").text();
-            document.getElementById('DistrictName').value = selectedDistrictName;
+            console.log(selectedDistrictId);
         } else {
             $('#ward').empty(); // Nếu không có huyện được chọn, xóa danh sách xã
             document.getElementById('DistrictName').value = '';
         }
     });
-
+    document.getElementById('ward').addEventListener('change', function () {
+        var selectedWard = this.value;
+        console.log(selectedWard);
+    });
     function getWards(districtId) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', '@Url.Action("GetWard", "Staff")?id=' + districtId, true); // Tạo đường dẫn sử dụng @Url.Action()
         xhr.onload = function () {
             if (xhr.status >= 200 && xhr.status < 300) {
                 var data = JSON.parse(xhr.responseText);
-                $('#ward').empty(); // Xóa danh sách xã hiện tại
-                $('#ward').html('<option value="">--Chọn tên xã(phường)--</option>');
                 data.forEach(item => {
                     $('#ward').append('<option value=' + item.id + '>' + item.name + '</option>'); // Thêm từng xã vào danh sách
                 });
@@ -258,11 +257,11 @@
         xhr.onload = function () {
             if (xhr.status >= 200 && xhr.status < 300) {
                 var data = JSON.parse(xhr.responseText);
-                $('#city').html('');
-                $('#city').html('<option value="">--Chọn tên tỉnh(Thành phố)--</option>');
                 data.forEach(item => {
                     $('#city').append('<option value=' + item.provinceID + '>' + item.provinceName + '</option>');
                 });
+                console.log(data);
+
             } else {
                 console.error('Request failed. Returned status of', xhr.status);
             }
@@ -272,4 +271,19 @@
         };
         xhr.send();
     }
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectedProvinceId = '@ViewBag.ProvinceID';
+        var selectedDistrictId = '@ViewBag.DistrictID';
+        var selectedWardId = '@ViewBag.WardID';
+        if (!selectedWardId) {
+            $('#city').html('<option value="">Chọn tên tỉnh(Thành phố)</option>');
+            $('#district').html('<option value="">Chọn tên quận(huyện)</option>');
+            $('#ward').html('<option value="">Chọn tên xã(phường)</option>');
+        }
+        else
+        {
+            getDistricts(selectedProvinceId);
+            getWards(selectedDistrictId);
+        }
+    });
 </script>

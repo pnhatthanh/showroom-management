@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using WebPBL3.DTO;
@@ -7,6 +8,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Policy = "Admin,Staff")]
     public class NewsController : Controller
     {
         private ApplicationDbContext _db;
@@ -23,8 +25,9 @@ namespace WebPBL3.Controllers
             ViewBag.HideHeader = false;
             return View(list);
         }
-        public IActionResult ListNews(int newid = 0, string searchtxt = "", int page = 1)
+        /*public IActionResult ListNews(int newid = 0, string searchtxt = "", int page = 1)
         {
+
             List<NewsDto> news = _db.NewS.Include(s => s.Staff).ThenInclude(u => u.User).Select(n => new NewsDto
             {
                 NewsID = n.NewsID,
@@ -54,7 +57,81 @@ namespace WebPBL3.Controllers
                 n.STT = cnt++;
             }
             return View(news);
+        }*/
+
+
+
+        public IActionResult ListNews(int newid = 0, string searchtxt = "", string exactDate = "", string startDate = "", string endDate = "", int page = 1)
+        {
+            var newsQuery = _db.NewS.Include(s => s.Staff)
+                                    .ThenInclude(u => u.User)
+                                    .Select(n => new NewsDto
+                                    {
+                                        NewsID = n.NewsID,
+                                        Title = n.Title,
+                                        Content = n.Content,
+                                        Photo = n.Photo,
+                                        CreateAt = n.CreateAt,
+                                        UpdateAt = n.UpdateAt,
+                                        UpdateBy = n.UpdateBy,
+                                        StaffID = n.StaffID,
+                                        FullName = n.Staff.User.FullName,
+                                    });
+
+            if (!string.IsNullOrWhiteSpace(searchtxt))
+            {
+                newsQuery = newsQuery.Where(n => n.FullName.Contains(searchtxt));
+            }
+
+            DateTime parsedExactDate;
+            DateTime parsedStartDate;
+            DateTime parsedEndDate;
+
+            if (!string.IsNullOrWhiteSpace(exactDate) && DateTime.TryParse(exactDate, out parsedExactDate))
+            {
+                newsQuery = newsQuery.Where(n => n.CreateAt.Date == parsedExactDate.Date);
+            }
+            else if (DateTime.TryParse(startDate, out parsedStartDate) && DateTime.TryParse(endDate, out parsedEndDate))
+            {
+                newsQuery = newsQuery.Where(n => n.CreateAt.Date >= parsedStartDate.Date && n.CreateAt.Date <= parsedEndDate.Date);
+            }
+
+            var newsList = newsQuery.ToList();
+
+            if (!newsList.Any() && (!string.IsNullOrWhiteSpace(searchtxt) || !string.IsNullOrWhiteSpace(exactDate) || !string.IsNullOrWhiteSpace(startDate) || !string.IsNullOrWhiteSpace(endDate)))
+            {
+                ViewBag.Message = "Không có tin tức nào được tìm thấy";
+            }
+
+            var total = newsList.Count;
+            var totalPage = (total + limits - 1) / limits;
+            if (page < 1) page = 1;
+            if (page > totalPage) page = totalPage;
+            ViewBag.totalRecord = total;
+            ViewBag.totalPage = totalPage;
+            ViewBag.currentPage = page;
+            ViewBag.searchtxt = searchtxt;
+            ViewBag.newid = newid;
+            ViewBag.exactDate = exactDate;
+            ViewBag.startDate = startDate;
+            ViewBag.endDate = endDate;
+
+            var paginatedNews = newsList.Skip((page - 1) * limits).Take(limits).ToList();
+
+            int cnt = 1;
+            foreach (var n in paginatedNews)
+            {
+                n.STT = cnt++;
+            }
+
+            return View(paginatedNews);
         }
+
+
+
+
+
+
 
         //Get
         public IActionResult Create() 
@@ -90,7 +167,7 @@ namespace WebPBL3.Controllers
                     Photo = news.Photo,
                     CreateAt = DateTime.Now,
                     UpdateAt = null,
-                    StaffID = "NV000001",
+                    StaffID = "1",
                 }) ;
                 await _db.SaveChangesAsync();
                 return RedirectToAction("ListNews");
@@ -100,77 +177,62 @@ namespace WebPBL3.Controllers
 
         public IActionResult Edit(string? id)
         {
-
-
             if (String.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
             News? news = _db.NewS.Find(id);
-
             if (news == null)
             {
                 return NotFound();
             }
-
             NewsDto newsDtoFromDb = new NewsDto
             {
-
                 NewsID = news.NewsID,
                 Title = news.Title,
                 Content = news.Content,
                 Photo = news.Photo,
                 CreateAt = news.CreateAt,
-                UpdateAt = DateTime.Now,
+                UpdateAt = news.UpdateAt,
                 StaffID = "1",
-
             };
+            var url = $"{Request.Scheme}://{Request.Host}/images/{news.Photo}";
+            ViewBag.filePath = url;
             return View(newsDtoFromDb);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(NewsDto n, IFormFile? uploadimage, string? id)
         {
-
             if (!ModelState.IsValid)
             {
                 News? news = _db.NewS.Find(id);
-                if (uploadimage != null && uploadimage.Length > 0)
+                bool ok = false;
+                string FILENAME = "";
+                if (TempData["UploadedFileName"] != null)
                 {
-                    int index = uploadimage.FileName.IndexOf('.');
-
-                    string _FileName = "news" + n.NewsID + "." + uploadimage.FileName.Substring(index + 1);
-                    n.Photo = _FileName;
-                    string _path = Path.Combine(_environment.WebRootPath, "images", _FileName);
-                    Console.WriteLine(_path);
-                    using (var fileStream = new FileStream(_path, FileMode.Create))
-                    {
-                        await uploadimage.CopyToAsync(fileStream);
-
-                    }
+                    FILENAME = TempData["UploadedFileName"].ToString();
+                    ok = true;
                 }
+                if(ok == true)
+                    news.Photo = FILENAME;
+                else
+                    news.Photo = n.Photo;
                 news.Title = n.Title;
                 news.Content = n.Content;
-                news.Photo = n.Photo;
                 news.CreateAt = n.CreateAt;
                 news.UpdateAt = DateTime.Now;
                 news.UpdateBy = 1.ToString();
                 news.StaffID = 1.ToString();
-
                 try
                 {
                     _db.NewS.Update(news);
-
                     await _db.SaveChangesAsync();
-
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
                     NotFound();
-
-                }
-
-
+                }                 
                 return RedirectToAction("ListNews");
             }
             return View(n);
@@ -188,10 +250,8 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
-
             NewsDto newsDtoFromDb = new NewsDto
             {
-
                 NewsID = news.NewsID,
                 Title = news.Title,
                 Content = news.Content,
@@ -199,7 +259,6 @@ namespace WebPBL3.Controllers
                 CreateAt = news.CreateAt,
                 UpdateAt = DateTime.Now,
                 StaffID = "1",
-
             };
             List<News> _news=_db.NewS.ToList();
             ViewBag._news = _news;
@@ -218,17 +277,14 @@ namespace WebPBL3.Controllers
             {
                 return NotFound();
             }
-
             try
             {
                 _db.NewS.Remove(newsToDelete); 
-                await _db.SaveChangesAsync(); 
-               
+                await _db.SaveChangesAsync();                
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                
+                Console.WriteLine(ex.Message);               
             }
             return RedirectToAction("ListNews");
         }
@@ -239,7 +295,6 @@ namespace WebPBL3.Controllers
             {
                 return BadRequest("File is empty."); 
             }
-
             var fileName = Path.GetFileName(upload.FileName);
             var filePath = Path.Combine(_environment.WebRootPath, "images", fileName);
             TempData["UploadedFileName"] = fileName;
@@ -250,7 +305,7 @@ namespace WebPBL3.Controllers
             }
             var url = $"{Request.Scheme}://{Request.Host}/images/{fileName}";
             return Json(new { uploaded = true, url });
-        }
+        }    
     }
 }
        

@@ -14,6 +14,7 @@ namespace WebPBL3.DTO
         [Required(ErrorMessage = "Bạn chưa nhập tiêu đề")]
         public string Title { get; set; }
 
+
         [Display(Name = "Nội dung")]
         [Required(ErrorMessage = "Bạn chưa nhập nội dung")]
         public string Content { get; set; }

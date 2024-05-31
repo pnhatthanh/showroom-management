@@ -1,4 +1,12 @@
 ﻿<!-- carousel -->
+@using WebPBL3.DTO;
+@model List<CarVM>
+@{
+    ViewData["Title"] = "Trang chủ";
+    var cars = ViewBag.cars;
+    var feedBacks = ViewBag.feedBacks;
+    var news = ViewBag.news;
+}
 <section>
 <div class="carousel">
     <!-- list item -->
@@ -129,7 +137,7 @@
             <div class="col-md-6 heading-section heading-section-white ftco-animate">
                 <h2 class="mb-3">Nhận thông tin xe bằng cách liên hệ</h2>
                 <h3 class="mb-3">Lưu ý, bạn hãy tìm ra những mẫu xe yêu thích trước khi liên hệ với chúng tôi</h3>
-                <a href="#" class="btn btn-primary btn-lg">Liên Hệ</a>
+                <a href="@Url.Action("Contact","Home")" class="btn btn-primary btn-lg" style="width: 150px">Liên Hệ</a>
             </div>
         </div>
     </div>
@@ -145,74 +153,60 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="carousel-car owl-carousel">
-                    <div class="item">
-                        <div class="car-wrap rounded ftco-animate">
-                            <div class="img rounded d-flex align-items-end" style="background-image: url(images/car-1.jpg);">
-                            </div>
-                            <div class="text">
-                                <h2 class="mb-0"><a href="#">Mercedes Grand Sedan</a></h2>
-                                <p class="price ml-auto">500</p>
-                                <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Chi Tiết</a></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="car-wrap rounded ftco-animate">
-                            <div class="img rounded d-flex align-items-end" style="background-image: url(images/car-2.jpg);">
-                            </div>
-                            <div class="text">
-                                <h2 class="mb-0"><a href="#">Mercedes Grand Sedan</a></h2>
-                                <p class="price ml-auto">500</p>
-                                <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Chi Tiết</a></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="car-wrap rounded ftco-animate">
-                            <div class="img rounded d-flex align-items-end" style="background-image: url(images/car-3.jpg);">
-                            </div>
-                            <div class="text">
-                                    <h2 class="mb-0"><a href="#">Mercedes Grand Sedan</a></h2>
-                                    <p class="price ml-auto">500</p>
+                    @foreach (var item in cars)
+                    {   
+                        
+                        <div class="item">
+                            <div class="car-wrap rounded ftco-animate">
+                                <div class="img rounded d-flex align-items-end" style="background-image: url(upload/car/@item.Photo);">
+                                </div>
+                                <div class="text">
+                                    <h2 class="mb-0"><a href="#">@item.CarName - @item.MakeName</a></h2>
+                                    <p class="price ml-auto">@String.Format("{0:N0}", item.Price) VNĐ</p>
                                     <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Chi Tiết</a></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="item">
-                        <div class="car-wrap rounded ftco-animate">
-                            <div class="img rounded d-flex align-items-end" style="background-image: url(images/car-4.jpg);">
-                            </div>
-                            <div class="text">
-                                <h2 class="mb-0"><a href="#">Mercedes Grand Sedan</a></h2>
-                                <p class="price ml-auto">500</p>
-                                <p class="d-flex mb-0 d-block"><a href="#" class="btn btn-primary py-2 mr-1">Chi Tiết</a></p>
-                            </div>
-                        </div>
-                    </div>
+                    }
+                    
+                    
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="ftco-section ftco-about">
-    <div class="container">
-        <div class="row no-gutters">
-            <div class="col-md-6 p-md-5 img img-2 d-flex justify-content-center align-items-center" style="background-image: url(images/about.jpg);">
-            </div>
-            <div class="col-md-6 wrap-about ftco-animate">
-                <div class="heading-section heading-section-white pl-md-5">
-                    <span class="subheading">About us</span>
-                    <h2 class="mb-4">Welcome to Carbook</h2>
-
-                    <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
-                    <p>On her way she met a copy. The copy warned the Little Blind Text, that where it came from it would have been rewritten a thousand times and everything that was left from its origin would be the word "and" and the Little Blind Text should turn around and return to its own, safe country. A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
-                    <p><a href="#" class="btn btn-primary py-3 px-4">Search Vehicle</a></p>
+<div class="container-fluid py-4">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-5 col-md-6 col-sm-12 wow fadeIn" data-wow-delay=".3s">
+                    <div class="h-100 position-relative">
+                        <img src="https://www.shutterstock.com/image-photo/positive-young-professional-saleswoman-demonstrating-600nw-1912865050.jpg"
+                             class="img-fluid w-75 rounded" alt="" style="margin-bottom: 25%;">
+                        <div class="position-absolute w-75" style="top: 25%; left: 25%;">
+                            <img src="https://www.easycars.com.au/media/3951/car-dealer-customer-retention-ec.png"
+                                 class="img-fluid w-100 rounded" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-6 col-sm-12 wow fadeIn" data-wow-delay=".5s">
+                    <h5 class="text-danger text-decoration-underline">Về chúng tôi</h5>
+                    <h1 class="mb-4">Sự hài lòng của khách hàng là niềm vui của chúng tôi</h1>
+                    <p>
+                        DragonCar không chỉ là một showroom ô tô thông thường, mà còn là một điểm đến tinh tế dành cho những người
+                        đam mê xe hơi và đẳng cấp. Với không gian trưng bày sang trọng và chăm sóc tận tình từ đội ngũ nhân viên
+                        giàu kinh nghiệm, chúng tôi cam kết mang đến cho bạn trải nghiệm mua sắm đẳng cấp và không thể quên.
+                        Tại DragonCar, bạn sẽ được khám phá những mẫu xe mới nhất từ các hãng danh tiếng trên thị trường, từ các
+                        dòng xe thể thao đầy sức mạnh đến những chiếc sedan sang trọng và xe SUV tiện ích. Chúng tôi luôn cập nhật
+                        và mang đến những xu hướng mới nhất trong ngành công nghiệp ô tô để đáp ứng mọi nhu cầu của khách hàng.
+                    </p>
+                    <p class="mb-4">Hãy đến và trải nghiệm sự hoàn hảo cùng DragonCar - nơi thực hiện những giấc mơ về xe hơi của bạn!</p>
+                <a href="@Url.Action("Contact","Home")" class="btn btn-primary btn-lg" style="width: 150px">Tìm xe</a>
                 </div>
             </div>
         </div>
     </div>
-</section>
+
 
 
 
@@ -229,61 +223,22 @@
         <div class="row ftco-animate">
             <div class="col-md-12">
                 <div class="carousel-testimony owl-carousel ftco-owl">
-                    <div class="item">
-                        <div class="testimony-wrap rounded text-center py-4 pb-5">
-                            <div class="user-img mb-2" style="background-image: url(images/person_1.jpg)">
-                            </div>
-                            <div class="text pt-4">
-                                <p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                <p class="name">Roger Scott</p>
-                                <span class="position">Marketing Manager</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="testimony-wrap rounded text-center py-4 pb-5">
-                            <div class="user-img mb-2" style="background-image: url(images/person_2.jpg)">
-                            </div>
-                            <div class="text pt-4">
-                                <p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                <p class="name">Roger Scott</p>
-                                <span class="position">Interface Designer</span>
+                    @foreach (var item in feedBacks)
+                    {
+                        <div class="item">
+                            <div class="testimony-wrap rounded text-center py-4 pb-5">
+                                <div class="user-img mb-2" style="background-image: url(upload/user/@item.Photo)">
+                                </div>
+                                <div class="text pt-4">
+                                    <p class="mb-4">@item.Content</p>
+                                    <p class="name">@item.FullName</p>
+                                    <span class="position">@item.Title</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="item">
-                        <div class="testimony-wrap rounded text-center py-4 pb-5">
-                            <div class="user-img mb-2" style="background-image: url(images/person_3.jpg)">
-                            </div>
-                            <div class="text pt-4">
-                                <p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                <p class="name">Roger Scott</p>
-                                <span class="position">UI Designer</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="testimony-wrap rounded text-center py-4 pb-5">
-                            <div class="user-img mb-2" style="background-image: url(images/person_1.jpg)">
-                            </div>
-                            <div class="text pt-4">
-                                <p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                <p class="name">Roger Scott</p>
-                                <span class="position">Web Developer</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="testimony-wrap rounded text-center py-4 pb-5">
-                            <div class="user-img mb-2" style="background-image: url(images/person_1.jpg)">
-                            </div>
-                            <div class="text pt-4">
-                                <p class="mb-4">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
-                                <p class="name">Roger Scott</p>
-                                <span class="position">System Analyst</span>
-                            </div>
-                        </div>
-                    </div>
+                    }
+                    
+                   
                 </div>
             </div>
         </div>
@@ -299,92 +254,30 @@
             </div>
         </div>
         <div class="row d-flex">
-            <div class="col-md-4 d-flex ftco-animate">
-                <div class="blog-entry justify-content-end">
-                    <a href="blog-single.html" class="block-20" style="background-image: url('images/image_1.jpg');">
-                    </a>
-                    <div class="text pt-4">
-                        <div class="meta mb-3">
-                            <div><a href="#">Oct. 29, 2019</a></div>
-                            <div><a href="#">Admin</a></div>
-                            <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
+            @foreach (var item in news)
+            {
+                <div class="col-md-4 d-flex ftco-animate">
+                    <div class="blog-entry justify-content-end">
+                        <a href="blog-single.html" class="block-20" style="background-image: url('images/@item.Photo');">
+                        </a>
+                        <div class="text pt-4" style="display: flex;justify-content: center;flex-direction: column;text-align: center;">
+                            <div class="meta mb-3">
+                                <div>@item.CreateAt?.ToString("MMM. dd, yyyy")</div>
+                                <div>@item.FullName</div>
+                                
+                            </div>
+                            <h3 class="heading mt-2">@item.Title</h3>
+                            <p><a class="btn btn-primary" asp-controller="News" asp-action="DetailUser" asp-route-id="@item.NewsID">Read more</a></p>
+                            
                         </div>
-                        <h3 class="heading mt-2"><a href="#">Why Lead Generation is Key for Business Growth</a></h3>
-                        <p><a href="#" class="btn btn-primary">Read more</a></p>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4 d-flex ftco-animate">
-                <div class="blog-entry justify-content-end">
-                    <a href="blog-single.html" class="block-20" style="background-image: url('images/image_2.jpg');">
-                    </a>
-                    <div class="text pt-4">
-                        <div class="meta mb-3">
-                            <div><a href="#">Oct. 29, 2019</a></div>
-                            <div><a href="#">Admin</a></div>
-                            <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
-                        </div>
-                        <h3 class="heading mt-2"><a href="#">Why Lead Generation is Key for Business Growth</a></h3>
-                        <p><a href="#" class="btn btn-primary">Read more</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 d-flex ftco-animate">
-                <div class="blog-entry">
-                    <a href="blog-single.html" class="block-20" style="background-image: url('images/image_3.jpg');">
-                    </a>
-                    <div class="text pt-4">
-                        <div class="meta mb-3">
-                            <div><a href="#">Oct. 29, 2019</a></div>
-                            <div><a href="#">Admin</a></div>
-                            <div><a href="#" class="meta-chat"><span class="icon-chat"></span> 3</a></div>
-                        </div>
-                        <h3 class="heading mt-2"><a href="#">Why Lead Generation is Key for Business Growth</a></h3>
-                        <p><a href="#" class="btn btn-primary">Read more</a></p>
-                    </div>
-                </div>
-            </div>
+            }
+            
+            
         </div>
     </div>
 </section>
 
-<section class="ftco-counter ftco-section img bg-light" id="section-counter">
-    <div class="overlay"></div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
-                <div class="block-18">
-                    <div class="text text-border d-flex align-items-center">
-                        <strong class="number" data-number="60">0</strong>
-                        <span>Year <br>Experienced</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
-                <div class="block-18">
-                    <div class="text text-border d-flex align-items-center">
-                        <strong class="number" data-number="1090">0</strong>
-                        <span>Total <br>Cars</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
-                <div class="block-18">
-                    <div class="text text-border d-flex align-items-center">
-                        <strong class="number" data-number="2590">0</strong>
-                        <span>Happy <br>Customers</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6 col-lg-3 justify-content-center counter-wrap ftco-animate">
-                <div class="block-18">
-                    <div class="text d-flex align-items-center">
-                        <strong class="number" data-number="67">0</strong>
-                        <span>Total <br>Branches</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>	
+
  

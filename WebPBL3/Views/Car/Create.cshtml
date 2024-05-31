@@ -1,39 +1,48 @@
 ﻿@using WebPBL3.Models
 @using Newtonsoft.Json
-@model WebPBL3.Models.CarDto
+@model WebPBL3.DTO.CarDto
 
 
 @{
 
-
+    ViewData["Title"] = "Thêm ô tô";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     var makesJson = TempData["makes"] as string;
     TempData.Keep("makes");
     var makes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Make>>(makesJson);
 }
 
-
-<hr />
-
-
+<br />
+<form method="post" enctype="multipart/form-data">
 <div class="row">
-    <div class="col-md-12">
-        <form method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" name="Photo" value="0" />
+    <div class="col-xl-4">
+        <!-- Profile picture card-->
+        <div class="card mb-3 mb-xl-0">
+            <div class="card-body text-center">
+                <!-- Profile picture image-->
+                <img id="profileimage" class="img-account-profile rounded-circle mb-2" src="~/upload/car/carot000000.jpg" alt="" style=" width: 200px;height:200px;">
+                <!-- Profile picture help block-->
+                <input type="file" class="form-control" id="uploadimage" name="uploadimage" style="display: none">
+                <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                    <button id="choosePhotoButton" type="button" class="btn btn-primary" style="position: relative; top: -10px; background-color: dodgerblue; color: white;">
+                    <i class="fa-solid fa-pen-to-square"></i> Thêm ảnh
+                </button>
+                <!-- Profile picture upload button-->
 
+            </div>
+        </div>
+    </div>
+    <div asp-validation-summary="ModelOnly" class="text-danger" style="display: none"></div>
+    <input type="hidden" asp-for="Photo" value="0" />
+    <div class="col-xl-8">
             <div class="form row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label asp-for="CarName" class="control-label">Tên Ô tô</label>
                     <input asp-for="CarName" class="form-control" />
                     <span asp-validation-for="CarName" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
-                    <label asp-for="Photo" class="control-label">Hình ảnh</label>
-                    <input type="file" class="form-control" id="uploadimage" name="uploadimage">
-                    <span asp-validation-for="Photo" class="text-danger"></span>
-                </div>
-                <div class="form-group col-md-3">
+                
+                <div class="form-group col-md-4">
                     <label asp-for="MakeID" class="control-label">Thương hiệu</label>
 
                     <select asp-for="MakeID" class="form-control">
@@ -47,7 +56,7 @@
                     </select>
                     <span asp-validation-for="MakeID" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label asp-for="Price" class="control-label">Giá xe (VND)</label>
                     <input asp-for="Price" class="form-control" />
                     <span asp-validation-for="Price" class="text-danger"></span>
@@ -55,22 +64,18 @@
             </div>
 
             <div class="form row">
-                <div class="form-group col-md-3">
-                    <label asp-for="Engine" class="control-label">Động cơ</label>
-                    <input asp-for="Engine" class="form-control" />
-                    <span asp-validation-for="Engine" class="text-danger"></span>
-                </div>
-                <div class="form-group col-md-3">
+                
+                <div class="form-group col-md-4">
                     <label asp-for="Seat" class="control-label">Số chỗ ngồi</label>
                     <input asp-for="Seat" class="form-control" />
                     <span asp-validation-for="Seat" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label asp-for="Dimension" class="control-label">Kích thước (A x B x C)</label>
                     <input asp-for="Dimension" class="form-control" />
                     <span asp-validation-for="Dimension" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label asp-for="Origin" class="control-label">Nguồn gốc</label>
                     <input asp-for="Origin" class="form-control" />
                     <span asp-validation-for="Origin" class="text-danger"></span>
@@ -78,56 +83,94 @@
             </div>
 
             <div class=" form row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label asp-for="Topspeed" class="control-label">Tốc độ tối đa (Km/h)</label>
                     <input asp-for="Topspeed" class="form-control" />
                     <span asp-validation-for="Topspeed" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label asp-for="Capacity" class="control-label">Dung tích (L)</label>
                     <input asp-for="Capacity" class="form-control" />
                     <span asp-validation-for="Capacity" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label asp-for="FuelConsumption" class="control-label">Nhiên liệu</label>
                     <input asp-for="FuelConsumption" class="form-control" />
                     <span asp-validation-for="FuelConsumption" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
+                
+            </div>
+
+            <div class="form row">
+                <div class="form-group col-md-4">
                     <label asp-for="Color" class="control-label">Màu sắc</label>
                     <input asp-for="Color" class="form-control" />
                     <span asp-validation-for="Color" class="text-danger"></span>
                 </div>
-            </div>
-
-            <div class="form row">
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label asp-for="Year" class="control-label">Năm sản xuất</label>
                     <input asp-for="Year" class="form-control" />
                     <span asp-validation-for="Year" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
+                <div class="form-group col-md-4">
                     <label asp-for="Quantity" class="control-label">Số lượng</label>
                     <input asp-for="Quantity" class="form-control" />
                     <span asp-validation-for="Quantity" class="text-danger"></span>
                 </div>
-                <div class="form-group col-md-3">
+                
+            </div>
+            <div class="form row col-md-12" ">
+                <div class="form-group >
+                    <label asp-for="Engine" class="control-label">Động cơ</label>
+                    <textarea asp-for="Engine" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Engine" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form row col-md-12">
+                <div class="form-group ">
                     <label asp-for="Description" class="control-label">Mô tả</label>
-                    <input asp-for="Description" class="form-control" />
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
             </div>
+            
+            
             <div class="form row" style="display: flex; justify-content: flex-end;">
                 <div class="form-group col-md-2">
                     <button type="submit" class="btn btn-primary form-control">Thêm mới</button>
                 </div>
-                <div class="form-group col-md-2">
-                    <a asp-controller="Car" asp-action="CarListTable" class="btn btn-outline-primary border form-control">
+                <div class="form-group col-md-3">
+                    <a asp-controller="Car" asp-action="CarListTable" class="btn btn-outline-success border form-control">
                         Quay lại danh sách
                     </a>
                 </div>
-            </div>
-            
-        </form>
+            </div> 
     </div>
 </div>
+</form>
+
+<script>
+    // Get the file input element and the image element
+    const fileInput = document.getElementById('uploadimage');
+    const profileImage = document.getElementById('profileimage');
+    document.getElementById('choosePhotoButton').addEventListener('click', function () {
+        document.getElementById('uploadimage').click();
+    });
+    // Add an event listener to the file input element
+    fileInput.addEventListener('change', function (event) {
+        // Check if a file is selected
+        if (event.target.files && event.target.files[0]) {
+            // Create a FileReader to read the file
+            const reader = new FileReader();
+
+            // Set up a callback function that runs when the file is read
+            reader.onload = function (e) {
+                // Update the src attribute of the image element with the new image
+                profileImage.src = e.target.result;
+            };
+
+            // Read the selected file as a data URL
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    });
+</script>

@@ -1,22 +1,16 @@
-﻿@using WebPBL3.Models
+﻿@using WebPBL3.DTO
 @using Newtonsoft.Json
-@model WebPBL3.Models.UserDto
+@model UserDto
 
 @{
 
-
+    ViewData["Title"] = "Chi tiết khách hàng";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    var wardsJson = TempData["wards"] as string;
-    TempData.Keep("wards");
-    var wards = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Ward>>(wardsJson);
-
-    var districtsJson = TempData["districts"] as string;
-    TempData.Keep("districts");
-    var districts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<District>>(districtsJson);
-
-    var provincesJson = TempData["provinces"] as string;
-    TempData.Keep("provinces");
-    var provinces = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Province>>(provincesJson);
+    string Photo = "userkh000000.jpg";
+    if (!string.IsNullOrEmpty(Model.Photo))
+    {
+        Photo = Model.Photo;
+    }
 }
 
 
@@ -30,7 +24,7 @@
 				<div class="card-body text-center">
 					
                     <!-- Profile picture image-->
-                    <img class="img-account-profile rounded-circle mb-2" src="~/upload/user/@Model.Photo" style=" width: 200px;height:200px;" alt="">
+                    <img class="img-account-profile rounded-circle mb-2" src="~/upload/user/@Photo" style=" width: 200px;height:200px;" alt="">
                     <!-- Profile picture help block-->
                    
                 </div>
@@ -123,7 +117,7 @@
                         </div>
                         <div class="form row" style="display: flex; justify-content: flex-end;">
                             <div class="form-group col-md-3">
-                                <a asp-controller="User" asp-action="UserListTable" class="btn btn-danger border form-control">
+                                <a asp-controller="User" asp-action="UserListTable" class="btn btn-success border form-control">
                                     Quay lại danh sách
                                 </a>
                             </div>
@@ -134,143 +128,3 @@
         </div>
     </div>
 </div>
-@* <div class="container-xl px-4 mt-4">
-
-    <hr class="mt-0 mb-4">
-    <div class="row">
-        <div class="col-xl-4">
-            <!-- Profile picture card-->
-            <div class="card mb-4 mb-xl-0">
-                <div class="card-body text-center">
-                    <!-- Profile picture image-->
-                    <img class="img-account-profile rounded-circle mb-2" src="https://i0.wp.com/carnaiba.pe.gov.br/site/wp-content/uploads/2022/05/user-avatar.png?resize=250%2C250" alt="">
-                    <!-- Profile picture help block-->
-                    <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-                    <!-- Profile picture upload button-->
-                    <button class="btn btn-primary" type="button">Thêm ảnh</button>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-8">
-            <!-- Account details card-->
-            <div class="card mb-4">
-                <div class="card-header">Thông tin chi tiết</div>
-                <div class="card-body">
-                    <form>
-                        
-                        <!-- Form Row-->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (first name)-->
-                            <div class="col-md-6">
-                                <label class="control-label">Họ và Tên</label>
-                                <div class="form-control">@Model.FullName</div>
-                            </div>
-                            <!-- Form Group (last name)-->
-                            <div class="col-md-6">
-                                <label class="control-label">Email</label>
-                                <div class="form-control">@Model.Email</div>
-                            </div>
-                        </div>
-                        <!-- Form Row        -->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (organization name)-->
-                            <div class="col-md-6">
-                                <label class="control-label">Số điện thoại</label>
-                                <div class="form-control">@Model.PhoneNumber</div>
-                            </div>
-                            <!-- Form Group (location)-->
-                            <div class="col-md-6">
-                                <label class="control-label">CCCD</label>
-                                <div class="form-control">@Model.Iden</div>
-                            </div>
-                        </div>
-                        <!-- Form Row        -->
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (organization name)-->
-                            <div class="col-md-6">
-                                <label asp-for="Gender" class="control-label">Giới tính</label>
-                                <select asp-for="Gender" class="form-control">
-                                    <option value="">--Chọn giới tính--</option>
-                                    <option value="True">Nam</option>
-                                    <option value="False">Nữ</option>
-                                </select>
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                            </div>
-                            <!-- Form Group (location)-->
-                            <div class="col-md-6">
-                                <label asp-for="BirthDate" class="control-label">Ngày sinh</label>
-                                <input asp-for="BirthDate" class="form-control" />
-                                <span asp-validation-for="BirthDate" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (phone number)-->
-                            <div class="col-md-6">
-                                <label asp-for="ProvinceName" class="control-label">Tên tỉnh(Thành phố)</label>
-                                <select id="city" asp-for="ProvinceName" class="form-control">
-                                    <option value="">--Chọn tên tỉnh(Thành phố)--</option>
-                                    @foreach (Province i in provinces)
-                                    {
-                                        <option value=@i.ProvinceName>@i.ProvinceName</option>
-
-                                    }
-                                    <!-- Các option cho Province sẽ được đổ vào đây -->
-                                </select>
-                                <span asp-validation-for="ProvinceName" class="text-danger"></span>
-                            </div>
-                            <!-- Form Group (birthday)-->
-                            <div class="col-md-6">
-                                <label asp-for="DistrictName" class="control-label">Tên quận(huyện)</label>
-
-                                <select id="district" asp-for="DistrictName" class="form-control">
-                                    <option value="">--Chọn tên quận(huyện)--</option>
-                                    @foreach (District i in districts)
-                                    {
-                                        <option value=@i.DistrictName>@i.DistrictName</option>
-
-                                    }
-                                    <!-- Các option cho District sẽ được đổ vào đây -->
-                                </select>
-                                <span asp-validation-for="DistrictName" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="row gx-3 mb-3">
-                            <!-- Form Group (phone number)-->
-                            <div class="col-md-6">
-                                <label asp-for="WardName" class="control-label">Tên xã(phường)</label>
-
-                                <select id="ward" asp-for="WardName" class="form-control">
-                                    <option value="">--Chọn tên xã(phường)--</option>
-                                    @foreach (Ward i in wards)
-                                    {
-                                        <option value=@i.WardName>@i.WardName</option>
-
-                                    }
-                                    <!-- Các option cho Ward sẽ được đổ vào đây -->
-                                </select>
-                                <span asp-validation-for="WardName" class="text-danger"></span>
-                            </div>
-                            <!-- Form Group (birthday)-->
-                            <div class="col-md-6">
-                                <label asp-for="Address" class="control-label">Số nhà, đường</label>
-                                <input asp-for="Address" class="form-control" />
-                                <span asp-validation-for="Address" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="form row" style="display: flex; justify-content: flex-end;">
-                            <div class="form-group col-md-3">
-                                <button type="submit" class="btn btn-primary form-control">Thêm mới</button>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <a asp-controller="User" asp-action="UserListTable" class="btn btn-outline-primary border form-control">
-                                    Quay lại danh sách
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> *@
-

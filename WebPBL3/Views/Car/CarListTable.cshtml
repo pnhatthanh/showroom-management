@@ -1,4 +1,5 @@
-﻿  @model List<CarDto>
+﻿ @using WebPBL3.DTO
+ @model List<CarDto>
 @{
     ViewData["Title"] = "Quản lý ô tô";
     Layout = "_AdminLayout";
@@ -9,6 +10,7 @@
     int total = ViewBag.totalPage;
     int makeid = ViewBag.makeid;
     string searchtxt = ViewBag.searchtxt;
+    int count = 0;
 
 }
 
@@ -24,7 +26,7 @@
     <div class="card-body p-4">
         <div class="row pb-3">
             <div class="col-4">
-                <div class=" input-group rounded">
+                <div class=" input-group rounded" style="z-index:0">
                     <input type="text" id="txtSearch" class="form-control rounded" placeholder="Search"  aria-label="Search" aria-describedby="search-addon" value="@searchtxt"/>
                     <span class="input-group-text border-0" id="search-addon">
                         <i class="fas fa-search"></i>
@@ -92,7 +94,7 @@
                 @foreach (var obj in Model.OrderBy(u => u.CarID))
                 {
                     <tr>
-                        <td>@obj.STT</td>
+                        <td>@(++count)</td>
                         <td>@obj.CarID</td>
 						<td>
                             <img src="~/upload/car/@obj.Photo" width="60" style="height:auto;" />
@@ -104,7 +106,7 @@
                             @obj.MakeName
                         </td>
                         <td>
-                            @obj.Price
+                            @String.Format("{0:N0}", obj.Price) VNĐ
                         </td>
                         <td>
                             @obj.Seat
@@ -128,35 +130,36 @@
                                 </a>
 
                                 <!-- Sử dụng icon trash cho Xóa -->
-                                
-                                <a href=" #myModal" class="btn btn-danger" data-toggle="modal" >
+
+                                <a href="#myModal-@obj.CarID" class="btn btn-danger" data-toggle="modal">
                                     <i class="fa-solid fa-trash"></i>
                                     Xóa
                                 </a>
-                                
-                                <div id="myModal" class="modal fade">
-                                    <div class="modal-dialog modal-confirm" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                <div id="myModal-@obj.CarID" class="modal fade">
+                                    <div class="modal-dialog modal-dialog-centered modal-confirm">
                                         <div class="modal-content">
-                                            <div class="modal-header">
-                                                <div class="icon-box" style="margin-right: 10px;">
-                                                    <i class="fa-solid fa-circle-exclamation" style="font-size: 24px;" ></i>
+                                            <div class="modal-header flex-column">
+                                                <div class="icon-box">
+                                                    <i class="material-icons">&#xE5CD;</i>
                                                 </div>
-                                                <h4 class="modal-title" style="margin-left 10px;">Xác nhận</h4>
+                                                <h4 class="modal-title w-100">Xác nhận</h4>
                                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             </div>
-                                            <div class="modal-body">
+                                            <div class="modal-body" style="color: black">
                                                 <p>Bạn có thực sự muốn xóa không? Quá trình này không thể hoàn tác.</p>
                                             </div>
-                                            <div class="modal-footer">
-                                                <a asp-controller="Car" asp-action="Delete" asp-route-id="@obj.CarID" class="btn btn-danger">
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                                                <a asp-controller="Car" asp-action="Delete" asp-route-id="@obj.CarID" class="btn btn-danger" style="color:white; line-height: 30px">
                                                     Xác nhận
                                                 </a>
-                                                <button type="button" class="btn btn-info" data-dismiss="modal">Hủy</button>
-                                           
                                             </div>
                                         </div>
                                     </div>
+
+
                                 </div>
+                               
 
                             </div>
 
@@ -198,15 +201,16 @@
 
 
 <script>
-
     document.getElementById("txtSearch").addEventListener("keydown", function (event) {
         if (event.keyCode === 13) {
             // Lấy giá trị từ txtSearch
             var searchValue = this.value;
+            // Lấy hãng
             var makeValue = document.getElementById("makeSelect").value;
+
             // Tạo URL với tham số makeid và searchValue
             var url = "/Car/CarListTable?makeid=" + makeValue + "&searchtxt=" + searchValue;
-
+            
             // Chuyển hướng đến URL
             window.location.href = url;
         }
@@ -219,18 +223,7 @@
         var searchValue = document.getElementById("txtSearch").value;
         // Tạo URL với tham số makeValue và searchValue
         var url = "/Car/CarListTable?makeid=" + makeValue + "&searchtxt=" + searchValue;
-
         // Chuyển hướng đến URL
         window.location.href = url;
     });
-    @* document.addEventListener("DOMContentLoaded", function () {
-        // Lấy tham chiếu đến ô nhập liệu
-        var searchInput = document.getElementById("txtSearch");
-
-        // Đặt con trỏ (cursor) vào cuối giá trị của ô nhập liệu
-        if (searchInput) {
-            searchInput.focus(); // Tập trung vào ô nhập liệu
-            searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length); // Đặt con trỏ ở cuối giá trị
-        }
-    }); *@
 </script>

@@ -1,4 +1,5 @@
-﻿@model List<CarDto>
+﻿@using WebPBL3.DTO
+@model List<CarDto>
 @{
     ViewData["Title"] = "Index";
 }
@@ -10,10 +11,10 @@
                 <p class="breadcrumbs">
                     <span class="mr-2">
                         <a href="@Url.Action("Index", "Home")">
-                            Home <i class="ion-ios-arrow-forward"></i>
+                            Trang chủ <i class="ion-ios-arrow-forward"></i>
                         </a>
                     </span> <span>
-                        Cars <i class="ion-ios-arrow-forward"></i>
+                        Sản phẩm <i class="ion-ios-arrow-forward"></i>
                     </span>
                 </p>
                 <h1 class="mb-3 bread">Choose Your Car</h1>
@@ -32,8 +33,9 @@
                             <h5>Sắp xếp</h5>
                             <div class="form-group mr-1">
                                 <select class="form-control" id="sortFilter" name="sort">
+                                    <option selected disabled>Chọn</option>
                                     <option value="Price">Giá</option>
-                                    <option value="bestSelling">Sản phẩm bán chạy</option>
+                                    <option value="bestSelling">Xe bán chạy</option>
                                 </select>
                             </div>
                         </div>
@@ -110,7 +112,11 @@
 <script src="https://code.jquery.com/jquery-migrate-3.0.1.min.js"></script>
 <script>
     $(function () {
-        $("#makeFilter, #originFilter, #colorFilter, #seatFilter").change(function (e) {
+        $("#makeFilter, #originFilter, #colorFilter, #seatFilter",).change(function (e) {
+            e.preventDefault();
+            loadCars();
+        });
+        $("#sortFilter").change(function (e) {
             e.preventDefault();
             loadCars();
         });
@@ -130,6 +136,7 @@
             let ori = $("#originFilter").val();
             let col = $("#colorFilter").val();
             let sea = $("#seatFilter").val();
+            let sort = $("#sortFilter").val();
             let perPage = 9;
             jQuery.ajaxSettings.traditional = true;
             $.get("/Car/Cars",
@@ -140,7 +147,8 @@
                     color: col,
                     seat: sea,
                     page: page,
-                    perPage: perPage
+                    perPage: perPage,
+                    sortBy: sort
                 },
                 function (response) {
                     console.log(response);
@@ -152,15 +160,15 @@
 
                         // Tạo các phần tử HTML
                         var $col = $("<div>").addClass("col-lg-4 col-md-6 col-sm-12");
-                        var $item = $("<div>").addClass("item").css("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.05)");
+                        var $item = $("<div>").addClass("item").css("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.1)");
                         var $link = $("<a>").addClass("car-link").attr("href", urlDetail);
                         var $carWrap = $("<div>").addClass("car-wrap rounded ftco-animate fadeInUp ftco-animated");
                         var $img = $("<div>").addClass("img rounded d-flex align-items-end").css({
                             "background-image": `url('/upload/car/${car[1]}')`,
-                            "background-size": "contain" 
+                            "background-size": "contain"
                         });
                         var $text = $("<div>").addClass("text").css("padding", "5px 30px 30px");
-                        var $title = $("<h2>").addClass("mb-0").css("font-size", "24px").html(`<a href="${urlDetail}">${car[3]}</a>`);
+                        var $title = $("<h2>").addClass("mb-0").css({ "font-size": "24px", "text-align": "center" }).html(`<a href="${urlDetail}">${car[3]}</a>`);
                         var $price = $("<p>").addClass("price ml-auto").css({ "margin-top": "5px", "font-size": "16px", "margin-bottom": "10px" }).text(`Giá: ${parseFloat(car[2]).toLocaleString('vi-VN')} VNĐ`);
                         var $detailLink = $("<p>").addClass("d-flex mb-0 d-block").html(`<a href="${urlDetail}" class="btn btn-primary detail-button">Chi tiết</a>`);
                         $text.append($title, $price, $detailLink);

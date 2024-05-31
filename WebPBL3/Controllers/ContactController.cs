@@ -8,6 +8,7 @@ using WebPBL3.Models;
 
 namespace WebPBL3.Controllers
 {
+    [Authorize(Policy = "Admin,Staff")]
     public class ContactController : Controller
     {
         private readonly ApplicationDbContext _context;

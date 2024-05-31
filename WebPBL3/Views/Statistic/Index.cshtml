@@ -32,6 +32,8 @@
     var prices = statisticTables.Select(st => st.Price).ToList();
     var totals = statisticTables.Select(st => st.Total).ToList();
 
+    
+
 }
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
 
@@ -179,40 +181,75 @@
                             
                             <h3><span><i class="fa fa-comments-o"></i> Bảng doanh thu chi tiết</span></h3>
                             <div style="margin-left: auto;">
-                                <form id="myForm" method="post" asp-controller="Statistic" asp-action="SaveExcel">
-                                    <button style="border-radius: 5px;">
-                                        <i class="fa-solid fa-file-export green_color" style="font-size:20px"></i> Xuất ra file Excel
-                                    </button>
-
-                                    <input type="hidden" id="data" name="data" />
-                                </form>
+                                
+                                <div class="col-3 text-end" style="text-align: center;">
+                                    <form id="myForm" method="post" asp-controller="Statistic" asp-action="SaveExcel">
+                                        <button type="submit" class="btn" style="background: white;border: 2px solid black; padding: 5px 10px; display: inline-block;">
+                                            <img src="~/images/excel (1).png" style="width: 22px; height: 22px; vertical-align: middle;" />
+                                            <span style="vertical-align: middle;">Xuất file excel</span>
+                                        </button>
+                                        <input type="hidden" id="data" name="data" />
+                                    </form>
+                                    @if (TempData["Error"] != null)
+                                    {
+                                        <div class="text-danger">
+                                            <span><b>Xin lỗi!</b> - @TempData["Error"] </span>
+                                        </div>
+                                    }
+                                </div>
                             </div>
                             
                             
                         </div>
-
-                       
+                        
                         <form method="get" action="/Statistic/Index">
-                            <div class="row">
-                                <div class="col-md-4" style="display: flex;">
+                            <div class="row" style="margin-bottom: 20px;margin-top: 20px">
+                                <div class="col-md-4" style="display: flex; ">
                                     <label for="min">Thời gian bắt đầu:</label>
 
-                                    <input style="margin-left: auto;" type="date" id="min" name="_startTime" value="@ViewBag._startTime">
+                                    @{
+                                        // Kiểm tra xem ViewBag có null không
+                                        if (ViewBag._startTime != null)
+                                        {
+                                            // Chuyển đổi DateOnly thành chuỗi "dd/MM/yyyy"
+                                            string formattedDate = ViewBag._startTime.ToString("yyyy/MM/dd");
+                                            
+                                            <input style="margin-left: auto;" type="date" id="min" name="_startTime" value=@formattedDate>
+                                        }
+                                        else
+                                        {
+                                            <input style="margin-left: auto;" type="date" id="min" name="_startTime">
+                                        }
+                                    }
                                 </div>
                                 <div class="col-md-4" style="display: flex;">
                                     <label for="max">Thời gian kết thúc:</label>
-                                    <input style="margin-left: auto;" type="date" id="max" name="_endTime" value="@ViewBag._endTime">
+                                    @{
+                                        // Kiểm tra xem ViewBag có null không
+                                        if (ViewBag._startTime != null)
+                                        {
+                                            // Chuyển đổi DateOnly thành chuỗi "dd/MM/yyyy"
+                                            string formattedDate = ViewBag._endTime.ToString("yyyy/MM/dd");
+
+                                            <input style="margin-left: auto;" type="date" id="max" name="_endTime" value=@formattedDate>
+                                        }
+                                        else
+                                        {
+                                            <input style="margin-left: auto;" type="date" id="max" name="_endTime" >
+                                        }
+                                    }
+                                    
                                 </div>
                                 <div class="col-md-4" style="display: flex;">
                                     <button type ="submit" style="margin-left: auto; border-radius: 5px; width: 175px; background-color: lawngreen">
-                                        <i class="fa-solid fa-filter " style="font-size:20px"></i>Lọc
+                                        <i class="fa-solid fa-filter " style="font-size:20px; height: 30px;line-height: 30px;"></i>Lọc
                                     </button>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4" style="display: flex;">
                                     <label for="nv">Mã nhân viên:</label>
-                                    <input style="margin-left: auto;" type="text" id="nv" name="maNV" value="@ViewBag.maNV">
+                                    <input style="margin-left: auto;height: 30px" type="text" id="nv" name="maNV" value="@ViewBag.maNV">
                                 </div>
                                 <div class="col-md-4" style="display: flex;">
                                     <label for="xe">Mã xe:</label>
@@ -254,7 +291,7 @@
                                                 <td>@i.MakeName</td>
                                                 <td>@i.StaffID</td>
                                                 <td>@i.Quantity</td>
-                                                <td>@i.Price</td>
+                                                <td>@String.Format("{0:N0}", i.Price)</td>
                                                 <td>@i.Total</td>
 
                                             </tr>
